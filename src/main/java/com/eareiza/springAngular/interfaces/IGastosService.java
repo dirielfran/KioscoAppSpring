@@ -10,8 +10,7 @@ import com.eareiza.springAngular.DTO.ConsignacionDto;
 import com.eareiza.springAngular.model.entity.Gastos;
 import com.eareiza.springAngular.model.entity.Inventario;
 
-public interface IGastosService {
-	
+public interface IGastosService {	
 	Gastos guardar(Gastos gasto);
 	List<Gastos> buscarTodos();
 	Gastos buscarPorId(Long id);
@@ -21,5 +20,7 @@ public interface IGastosService {
 	List<Gastos> buscarPorClasificacion(String clasificacion);
 	Page<Gastos> getGastos(Pageable pagina);
 	Gastos buscarPorInventario(Long inventario);
-	public void crearGastoInventario(Inventario inventario, String tipo, ConsignacionDto consignacion);
+	public void crearGastoInventario(Inventario inventario, String tipo, ConsignacionDto consignacion, Boolean mercadoPago);
+	public Double findGanancias();
+	public Double findGastosxmes();
 }

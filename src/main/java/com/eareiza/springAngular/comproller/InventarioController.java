@@ -31,7 +31,6 @@ import com.eareiza.springAngular.interfaces.IGastosService;
 import com.eareiza.springAngular.interfaces.IInventarioService;
 import com.eareiza.springAngular.interfaces.IProductoService;
 import com.eareiza.springAngular.interfaces.IUsuariosService;
-import com.eareiza.springAngular.model.entity.Cliente;
 import com.eareiza.springAngular.model.entity.Gastos;
 import com.eareiza.springAngular.model.entity.Inventario;
 import com.eareiza.springAngular.model.entity.ItemInventario;
@@ -135,7 +134,7 @@ public class InventarioController {
 			if (!consignacion) {
 				
 				//Se crea el gasto
-				gastosService.crearGastoInventario(inventario, "Inventario", null);
+				gastosService.crearGastoInventario(inventario, "Inventario", null, null);
 			}
 		} catch (DataAccessException e) {
 			response.put("mensaje", "Error al insertar el inventario.");

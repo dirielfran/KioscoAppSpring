@@ -14,7 +14,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
@@ -30,13 +29,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.eareiza.springAngular.interfaces.IProductoService;
-import com.eareiza.springAngular.interfaces.IUsuariosService;
 import com.eareiza.springAngular.model.entity.Producto;
-import com.eareiza.springAngular.model.entity.Role;
-import com.eareiza.springAngular.model.entity.Usuario;
-import com.eareiza.springAngular.model.service.EnvioMail;
-
-import net.bytebuddy.implementation.bind.MethodDelegationBinder.BindingResolver;
 
 @RestController
 @RequestMapping("/api")
@@ -49,9 +42,6 @@ public class ProductoController {
 	
 	@Autowired
 	private IProductoService productoServ;
-	
-	@Autowired
-	private IUsuariosService serviceUsuario;
 	
 	@Secured({"ROLE_ADMIN"})
 	@GetMapping("/producto/filtrarProducto/{term}")

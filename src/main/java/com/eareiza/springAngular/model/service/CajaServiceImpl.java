@@ -16,16 +16,12 @@ import com.eareiza.springAngular.model.entity.Factura;
 import com.eareiza.springAngular.model.entity.ItemFactura;
 import com.eareiza.springAngular.model.entity.ItemInventario;
 import com.eareiza.springAngular.model.repository.ICajaRepository;
-import com.eareiza.springAngular.model.repository.IInventarioRepository;
 
 @Service
 public class CajaServiceImpl implements ICajaService {
 
 	@Autowired
 	private ICajaRepository cajaRepo;
-	
-	@Autowired
-	private IInventarioRepository inventarioRepo;
 	
 	@Autowired
 	private ICajachicaService cajaService;

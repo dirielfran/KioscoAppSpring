@@ -2,13 +2,13 @@ package com.eareiza.springAngular.comproller;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,43 +18,30 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.eareiza.springAngular.utileria.Utileria;
 import com.eareiza.springAngular.interfaces.ICajachicaService;
 import com.eareiza.springAngular.interfaces.IGastosService;
-import com.eareiza.springAngular.interfaces.IUsuariosService;
 import com.eareiza.springAngular.model.entity.Cajachica;
-import com.eareiza.springAngular.model.entity.Cliente;
 import com.eareiza.springAngular.model.entity.Gastos;
-import com.eareiza.springAngular.model.entity.Inventario;
-import com.eareiza.springAngular.model.entity.Role;
-import com.eareiza.springAngular.model.entity.Usuario;
 import com.eareiza.springAngular.model.service.EnvioMail;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -70,9 +57,6 @@ public class GastosController {
 	
 	@Autowired
 	private IGastosService serviceGastos;
-	
-	@Autowired
-	private IUsuariosService serviceUsuario;
 	
 	@Autowired
 	private ICajachicaService cajaService;
@@ -269,6 +253,57 @@ public class GastosController {
 		//En caso de existir se retorna el obj y el estatus del mensaje
 		return new ResponseEntity<Gastos>(gasto, HttpStatus.OK);
 	}
+	
+	
+	//Se recuperan total de ganancias
+	@Secured({"ROLE_ADMIN", "ROLE_USER"})
+	@GetMapping("/gastos/ganancias")
+	public ResponseEntity<?> getGanancias( ) {
+		Double ganancias = null;
+		//Se crea Map para el envio de mensaje de error en el ResponseEntity
+		Map<String, Object> response = new HashMap<>();
+		//Se maneja el error de base datos con el obj de spring DataAccessExceptions
+		try {
+			//Se recupera el inventario por el id
+			ganancias = serviceGastos.findGanancias();
+		} catch (DataAccessException e) {
+			response.put("mensaje", "Error a realizar la consulta en la base de Datos.");
+			response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		//Se valida si el inventario es null y se maneja el error
+		if(ganancias == null) {
+			response.put("mensaje", "No existen ganancias para este mes en la Base de Datos");
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NO_CONTENT);
+		}
+		//En caso de existir se retorna el obj y el estatus del mensaje
+		return new ResponseEntity<Double>(ganancias, HttpStatus.OK);
+	}
+	
+	//Se recuperan total de gastos por mes
+		@Secured({"ROLE_ADMIN", "ROLE_USER"})
+		@GetMapping("/gastos/gastosxmes")
+		public ResponseEntity<?> getGastos( ) {
+			Double gastos = null;
+			//Se crea Map para el envio de mensaje de error en el ResponseEntity
+			Map<String, Object> response = new HashMap<>();
+			//Se maneja el error de base datos con el obj de spring DataAccessExceptions
+			try {
+				//Se recupera los gastos por mes
+				gastos = serviceGastos.findGastosxmes();
+			} catch (DataAccessException e) {
+				response.put("mensaje", "Error a realizar la consulta en la base de Datos.");
+				response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+				return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+			//Se valida si el inventario es null y se maneja el error
+			if(gastos == null) {
+				response.put("mensaje", "No existen gastos en el mes en la Base de Datos");
+				return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NO_CONTENT);
+			}
+			//En caso de existir se retorna el obj y el estatus del mensaje
+			return new ResponseEntity<Double>(gastos, HttpStatus.OK);
+		}
 	
 	public void pruebaApi() {
 		RestTemplate restTemplate = new RestTemplate();

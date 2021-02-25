@@ -3,6 +3,8 @@ package com.eareiza.springAngular.model.repository;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -22,5 +24,7 @@ public interface GastosRepository extends JpaRepository<Gastos, Long> {
 	
 	@Query("select g from Gastos g where inventario.id = ?1")
 	public Gastos findByInventario(Long inventario);
+	
+	public Page<Gastos> findByOrderByIdDesc(Pageable page);
 	
 }

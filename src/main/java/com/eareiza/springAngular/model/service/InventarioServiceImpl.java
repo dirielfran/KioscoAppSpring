@@ -14,7 +14,7 @@ import com.eareiza.springAngular.model.entity.ItemInventario;
 import com.eareiza.springAngular.model.entity.Producto;
 import com.eareiza.springAngular.model.repository.IInventarioRepository;
 import com.eareiza.springAngular.model.repository.IProductoRepository;
-
+ 
 @Service
 public class InventarioServiceImpl implements IInventarioService {
 	
@@ -31,7 +31,7 @@ public class InventarioServiceImpl implements IInventarioService {
 
 	@Override
 	public Page<Inventario> findAll(Pageable pagina) {
-		Page<Inventario> inventario = inventarioRepo.findAll(pagina);
+		Page<Inventario> inventario = inventarioRepo.findByOrderByIdDesc(pagina);
 		return inventario;
 	}
 

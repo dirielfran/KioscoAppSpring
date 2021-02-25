@@ -91,7 +91,7 @@ public class GastosServiceImpl implements IGastosService{
 
 	@Override
 	public Page<Gastos> getGastos(Pageable pagina) {
-		return repoGastos.findAll(pagina);
+		return repoGastos.findByOrderByIdDesc(pagina);
 	}
 
 	@Override

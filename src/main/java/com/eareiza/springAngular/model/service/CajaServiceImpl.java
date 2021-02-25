@@ -39,7 +39,7 @@ public class CajaServiceImpl implements ICajaService {
 	@Override
 	@Transactional(readOnly = true)
 	public Page<Caja> finAll(Pageable pagina) {
-		return cajaRepo.findAll(pagina);
+		return cajaRepo.findByOrderByIdDesc(pagina);
 	}
 
 	@Override

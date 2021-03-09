@@ -192,7 +192,7 @@ public class InventarioController {
 		Map<String, Object> response = new HashMap<>();
 		try {
 			Gastos gasto = gastosService.buscarPorInventario(idInventario);
-			gastosService.borrarGasto(gasto.getId());
+			if(gasto != null )gastosService.borrarGasto(gasto.getId());
 			inventarioService.delete(idInventario);
 		} catch (DataAccessException e) {
 			response.put("mensaje", "Error al eliminar el inventario ID: "

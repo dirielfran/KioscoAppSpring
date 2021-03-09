@@ -23,7 +23,7 @@ public interface GastosRepository extends JpaRepository<Gastos, Long> {
 	
 	public List<Gastos> findByClasificacion(String clasificacion);
 	
-	@Query(value="select SUM(g.monto_pesos) from Gastos g where g.clasificacion = ?1 and g.fecha_fact between ?2 and ?3", nativeQuery = true)
+	@Query(value="select SUM(g.monto_pesos) from gastos g where g.clasificacion = ?1 and g.fecha_fact between ?2 and ?3", nativeQuery = true)
 	public Object findGastosXMes(String gasto, LocalDate fechIni, LocalDate fechaFin);
 	
 	@Query("select g from Gastos g where inventario.id = ?1")

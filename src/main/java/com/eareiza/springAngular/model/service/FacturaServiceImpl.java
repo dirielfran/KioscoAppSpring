@@ -11,11 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.eareiza.springAngular.DTO.ConsignacionDto;
-import com.eareiza.springAngular.interfaces.ICajachicaService;
 import com.eareiza.springAngular.interfaces.IFacturaService;
-import com.eareiza.springAngular.interfaces.IGastosService;
 import com.eareiza.springAngular.interfaces.IItemInventarioService;
-import com.eareiza.springAngular.model.entity.Cajachica;
 import com.eareiza.springAngular.model.entity.Comision;
 import com.eareiza.springAngular.model.entity.Factura;
 import com.eareiza.springAngular.model.entity.ItemFactura;
@@ -37,9 +34,6 @@ public class FacturaServiceImpl implements IFacturaService {
 	
 	@Autowired
 	private IComisionRepository comisionRepo;
-	
-	@Autowired
-	private ICajachicaService cajaService;
 	
 	@Autowired 
 	private IItemFacturaRepository itemFactRepo;

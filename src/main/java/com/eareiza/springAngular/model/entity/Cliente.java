@@ -27,6 +27,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name="clientes")
+@JsonIgnoreProperties (ignoreUnknown = true)
 public class Cliente implements Serializable{
 	/**
 	 * 

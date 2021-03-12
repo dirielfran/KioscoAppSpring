@@ -67,7 +67,7 @@ public class ConsignacionRestController {
 	}
 	
 	//Se le añade seguridad a los endpoint por url
-	@Secured("ROLE_ADMIN")
+	@Secured({"ROLE_ADMIN", "ROLE_USER"})
 	@PostMapping("/consignaciones")
 	public ResponseEntity<?> crearGasto(@Valid @RequestBody ConsignacionDto consignacion, BindingResult result, @RequestParam("mercadoPago") Boolean mercadoPago){
 		//Se agrega map para el envio de mensaje y obj en el response
@@ -91,7 +91,7 @@ public class ConsignacionRestController {
 			ItemFactura itemFactura = facturasService.findItemFactura(consignacion.getFactura());		
 			List<ItemFactura> facturas = facturasService.findItemsFactura(itemFactura.getProducto().getId());
 			Inventario inventario = inventarioService.findById(consignacion.getInventario());
-			gastoService.crearGastoInventario(inventario, "Consigacion", consignacion, mercadoPago);
+			gastoService.crearGastoInventario(inventario, "Consignacion", consignacion, mercadoPago);
 			for (ItemFactura factura : facturas) {
 				factura.setConsignacion(false);
 				facturasService.saveItemFactura(factura);

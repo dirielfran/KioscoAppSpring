@@ -55,7 +55,7 @@ public class FacturaRestController {
 		factServ.deleteFactura(idFactura);
 	}
 	
-	@Secured({"ROLE_ADMIN"})
+	@Secured({"ROLE_ADMIN", "ROLE_USER"})
 	@PostMapping("/facturas")
 	@ResponseStatus(HttpStatus.CREATED)
 	public Factura crearFactura(@RequestBody Factura factura) {

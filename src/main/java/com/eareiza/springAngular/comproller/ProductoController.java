@@ -43,7 +43,7 @@ public class ProductoController {
 	@Autowired
 	private IProductoService productoServ;
 	
-	@Secured({"ROLE_ADMIN"})
+	@Secured({"ROLE_ADMIN","ROLE_USER"})
 	@GetMapping("/producto/filtrarProducto/{term}")
 	@ResponseStatus(HttpStatus.OK)
 	public List<Producto> filtrarProducto(@PathVariable("term") String termino){

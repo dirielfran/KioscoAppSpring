@@ -17,4 +17,5 @@ public interface ICajaService {
 	void deleteCaja(Long idCaja);
 	Long countByEstadoCaja(String estado);
 	Caja buscarXEstado(String estado);
+	public Double findDiferenciasXMes();
 }

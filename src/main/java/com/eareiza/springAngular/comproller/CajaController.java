@@ -236,4 +236,29 @@ public class CajaController {
 		cajachicaService.registroDiferenciaCaja(caja, diferencia);
 		return caja.getCliente().getId();
 	}
+	
+	//Se recuperan total de diferencias por mes
+	@Secured({"ROLE_ADMIN", "ROLE_USER"})
+	@GetMapping("/caja/diferenciasxmes")
+	public ResponseEntity<?> getGastos( ) {
+		Double diferencias = null;
+		//Se crea Map para el envio de mensaje de error en el ResponseEntity
+		Map<String, Object> response = new HashMap<>();
+		//Se maneja el error de base datos con el obj de spring DataAccessExceptions
+		try {
+			//Se recupera las perdidas por mes
+			diferencias = cajaService.findDiferenciasXMes();
+		} catch (DataAccessException e) {
+			response.put("mensaje", "Error a realizar la consulta en la base de Datos.");
+			response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		//Se valida si hay perdidas es null y se maneja el error
+		if(diferencias == null || diferencias == 0) {
+			response.put("mensaje", "No existen diferencias en el mes en la Base de Datos");
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NO_CONTENT);
+		}
+		//En caso de existir se retorna el obj y el estatus del mensaje
+		return new ResponseEntity<Double>(diferencias, HttpStatus.OK);
+	}
 }

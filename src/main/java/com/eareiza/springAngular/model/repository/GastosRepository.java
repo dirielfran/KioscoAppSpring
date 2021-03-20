@@ -29,7 +29,7 @@ public interface GastosRepository extends JpaRepository<Gastos, Long> {
 	@Query("select g from Gastos g where inventario.id = ?1")
 	public Gastos findByInventario(Long inventario);
 	
-
+	
 	public Page<Gastos> findByOrderByIdDesc(Pageable page);
 
 	@Query(value="select  sum(((fi.precio-ii.preciocompra)*fi.cantidad)+fi.comision) as ganancia "

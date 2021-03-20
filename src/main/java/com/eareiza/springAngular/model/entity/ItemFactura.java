@@ -42,7 +42,7 @@ public class ItemFactura implements Serializable {
 	@JoinColumn(name = "iteminventario_id")
 	private ItemInventario item_inventario;
 
-	// Se le añade el cascade para que se elimine en cascda cuando sea eliminada la
+	// Se le añade el cascade para que se elimine en cascada cuando sea eliminada la
 	// entidad
 	@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 	@ManyToMany(fetch = FetchType.LAZY)

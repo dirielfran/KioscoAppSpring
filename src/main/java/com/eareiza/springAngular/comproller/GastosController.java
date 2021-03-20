@@ -281,29 +281,29 @@ public class GastosController {
 	}
 	
 	//Se recuperan total de gastos por mes
-		@Secured({"ROLE_ADMIN", "ROLE_USER"})
-		@GetMapping("/gastos/gastosxmes")
-		public ResponseEntity<?> getGastos( ) {
-			Double gastos = null;
-			//Se crea Map para el envio de mensaje de error en el ResponseEntity
-			Map<String, Object> response = new HashMap<>();
-			//Se maneja el error de base datos con el obj de spring DataAccessExceptions
-			try {
-				//Se recupera los gastos por mes
-				gastos = serviceGastos.findGastosxmes();
-			} catch (DataAccessException e) {
-				response.put("mensaje", "Error a realizar la consulta en la base de Datos.");
-				response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
-				return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-			}
-			//Se valida si el inventario es null y se maneja el error
-			if(gastos == null) {
-				response.put("mensaje", "No existen gastos en el mes en la Base de Datos");
-				return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NO_CONTENT);
-			}
-			//En caso de existir se retorna el obj y el estatus del mensaje
-			return new ResponseEntity<Double>(gastos, HttpStatus.OK);
+	@Secured({"ROLE_ADMIN", "ROLE_USER"})
+	@GetMapping("/gastos/gastosxmes")
+	public ResponseEntity<?> getGastos( ) {
+		Double gastos = null;
+		//Se crea Map para el envio de mensaje de error en el ResponseEntity
+		Map<String, Object> response = new HashMap<>();
+		//Se maneja el error de base datos con el obj de spring DataAccessExceptions
+		try {
+			//Se recupera los gastos por mes
+			gastos = serviceGastos.findGastosxmes();
+		} catch (DataAccessException e) {
+			response.put("mensaje", "Error a realizar la consulta en la base de Datos.");
+			response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+		//Se valida si el inventario es null y se maneja el error
+		if(gastos == null) {
+			response.put("mensaje", "No existen gastos en el mes en la Base de Datos");
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NO_CONTENT);
+		}
+		//En caso de existir se retorna el obj y el estatus del mensaje
+		return new ResponseEntity<Double>(gastos, HttpStatus.OK);
+	}
 	
 	public void pruebaApi() {
 		RestTemplate restTemplate = new RestTemplate();

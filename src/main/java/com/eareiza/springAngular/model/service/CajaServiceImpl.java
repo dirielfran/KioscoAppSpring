@@ -1,6 +1,7 @@
 package com.eareiza.springAngular.model.service;
 
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,6 +84,19 @@ public class CajaServiceImpl implements ICajaService {
 	@Override
 	public Caja buscarXEstado(String estado) {
 		return cajaRepo.findByEstado(estado);
+	}
+
+	/*
+	 * Metodo que obtiene las diferencias del mes actual
+	 * */
+	@Override
+	public Double findDiferenciasXMes() {
+		LocalDate fecha = LocalDate.now();
+		LocalDate desde = fecha.withDayOfMonth(1);
+		LocalDate hasta = fecha.withDayOfMonth(fecha.lengthOfMonth());
+		Object obj = cajaRepo.findDiferenciasXMes(desde, hasta);
+		Double perdidas = (Double) obj;
+		return perdidas;
 	}
 
 }

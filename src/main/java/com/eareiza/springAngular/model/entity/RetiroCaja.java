@@ -27,7 +27,7 @@ public class RetiroCaja implements Serializable{
 	private String descripcion;
 	
 	
-	@JsonIgnoreProperties(value = {"retirosCaja"})
+	@JsonIgnoreProperties(value = {"retirosCaja", "facturas"})
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JsonBackReference(value = "cliente")
 	@JoinColumn(name = "cliente_id")

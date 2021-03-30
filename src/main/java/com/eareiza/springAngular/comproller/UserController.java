@@ -26,7 +26,7 @@ public class UserController {
 	@Secured({"ROLE_ADMIN"})
 	@GetMapping(value="/encriptacion")
 	public ResponseEntity<?> pruebaEncripta() {
-		String password ="danger120-";
+		String password ="Vanessa121";
 		String encriptado = encoder.encode(password);
 		System.out.println("Password encriptado: "+encriptado);
 		Map<String, Object> response = new HashMap<>();

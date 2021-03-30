@@ -128,7 +128,7 @@ public class GastosController {
 	
 	//Se crea Cliente
 	//Se le añade seguridad a los endpoint por url
-	@Secured("ROLE_ADMIN")
+	@Secured({"ROLE_ADMIN","ROLE_USER"})
 	@PostMapping("/gastos")
 	public ResponseEntity<?> saveGastos(@Valid @RequestBody Gastos gasto, BindingResult result, @RequestParam(value = "user") String user) {
 		Gastos gastoNew = null;
@@ -212,7 +212,7 @@ public class GastosController {
 	
 	//delete de Gasto
 	//Se le añade seguridad a los endpoint por url
-	@Secured("ROLE_ADMIN")
+	@Secured({"ROLE_ADMIN","ROLE_USER"})
 	@DeleteMapping("/gastos/{id}")
 	public ResponseEntity<?> delete(@PathVariable Long id) {
 		Map<String, Object> response = new HashMap<>();
@@ -256,7 +256,7 @@ public class GastosController {
 	
 	
 	//Se recuperan total de ganancias
-	@Secured({"ROLE_ADMIN", "ROLE_USER"})
+	@Secured({"ROLE_ADMIN"})
 	@GetMapping("/gastos/ganancias")
 	public ResponseEntity<?> getGanancias( ) {
 		Double ganancias = null;
@@ -281,7 +281,7 @@ public class GastosController {
 	}
 	
 	//Se recuperan total de gastos por mes
-	@Secured({"ROLE_ADMIN", "ROLE_USER"})
+	@Secured({"ROLE_ADMIN"})
 	@GetMapping("/gastos/gastosxmes")
 	public ResponseEntity<?> getGastos( ) {
 		Double gastos = null;

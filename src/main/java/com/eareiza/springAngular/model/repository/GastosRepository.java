@@ -23,10 +23,15 @@ public interface GastosRepository extends JpaRepository<Gastos, Long> {
 	
 	public List<Gastos> findByClasificacion(String clasificacion);
 	
-	@Query(value="select SUM(g.monto_pesos) from gastos g where g.clasificacion = ?1 and g.fecha_fact between ?2 and ?3", nativeQuery = true)
+	@Query(value="select SUM(g.monto_pesos) "
+			+ "from gastos g "
+			+ "where g.clasificacion = ?1 "
+			+ "	and g.fecha_fact between ?2 and ?3", nativeQuery = true)
 	public Object findGastosXMes(String gasto, LocalDate fechIni, LocalDate fechaFin);
 	
-	@Query("select g from Gastos g where inventario.id = ?1")
+	@Query("select g "
+			+ "from Gastos g "
+			+ "where inventario.id = ?1")
 	public Gastos findByInventario(Long inventario);
 	
 	
@@ -40,4 +45,21 @@ public interface GastosRepository extends JpaRepository<Gastos, Long> {
 			+ "	inner join inventarios_items ii on ii.id = piv.iteminventario_id "
 			+ " where f.create_at between ?1 and ?2", nativeQuery = true )
 	public Object findGananciasXMes(LocalDate fechaIni, LocalDate fechaFin);
+	
+	@Query(value="select sum(monto_pesos)/1000, WEEKDAY(fecha_fact) "
+			+ "		from gastos "
+			+ "		WHERE MONTH(fecha_fact) = ?1 "
+			+ "		AND YEAR(fecha_fact) = ?2 "
+			+ "		group by fecha_fact "
+			+ "		order by fecha_fact desc "
+			+ "		limit 7", nativeQuery = true)
+	public List<Object[]> findGastosXUlt7(Integer mes, Integer anio);
+	
+	@Query(value="SELECT SUM(g.montoPesos) "
+			+ "FROM Gastos g "
+			+ "WHERE YEAR(g.fechaFact) = ?1 "
+			+ "AND clasificacion = ?2 "
+			+ "GROUP BY MONTH(g.fechaFact) "
+			+ "ORDER BY MONTH(g.fechaFact) ASC")
+	public List<Double> findGastosXMes( Integer anio, String clasificacion);
 }

@@ -305,22 +305,7 @@ public class GastosController {
 		return new ResponseEntity<Double>(gastos, HttpStatus.OK);
 	}
 	
-	public void pruebaApi() {
-		RestTemplate restTemplate = new RestTemplate();
-	    ResponseEntity<String> call= restTemplate.getForEntity("https://www.dolarsi.com/api/api.php?type=valoresprincipales",String.class);
-	    ObjectMapper mapper = new ObjectMapper();
-	    TypeReference<HashMap<String, String>> typeRef = new TypeReference<HashMap<String, String>>() {};
-	    Map<String, String> map = null;
-	    try {
-			 map = mapper.readValue(call.getBody(), typeRef);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-	    System.out.println(call.getBody());
-	    System.out.println(map.toString());
-	}	
+	
 	
 	// declarar un conversor de tipos fcha para que sea manejado por el
 	// controlador antes de almacenarlo en el bean

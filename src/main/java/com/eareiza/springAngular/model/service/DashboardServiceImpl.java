@@ -78,7 +78,6 @@ public class DashboardServiceImpl implements IDashboardService{
 	public List<Object[]> findProductosTopMes() {
 		LocalDate desde = fecha.withDayOfMonth(1);
 		LocalDate hasta = fecha.withDayOfMonth(fecha.lengthOfMonth());
-		cotizacionDolar();
 		return productoRepo.findProductosTop(desde, hasta);
 	}
 	
@@ -125,15 +124,18 @@ public class DashboardServiceImpl implements IDashboardService{
 		Double dolar = 0D;
 		RestTemplate restTemplate = new RestTemplate();
 		String  call= restTemplate.getForObject("https://www.dolarsi.com/api/api.php?type=valoresprincipales",String.class);
+		
 		// Obtain Array
         JsonArray gsonArr = JsonParser.parseString(call).getAsJsonArray();
         for (JsonElement obj : gsonArr) {
             JsonObject gsonObj = obj.getAsJsonObject();
             JsonObject gsonObj1 = gsonObj.get("casa").getAsJsonObject();
+            System.out.println(gsonObj1);
             if(gsonObj1.get("nombre").getAsString().equals("Dolar Blue")) {
             	NumberFormat nf = NumberFormat.getInstance();
             	try {
 					dolar = nf.parse(gsonObj1.get("venta").getAsString()).doubleValue();
+					System.out.println("Dolar: "+dolar);
 				} catch (ParseException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

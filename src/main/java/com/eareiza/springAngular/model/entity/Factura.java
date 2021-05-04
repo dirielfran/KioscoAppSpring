@@ -57,6 +57,8 @@ public class Factura implements Serializable{
 	@JoinColumn(name = "factura_id")
 	private List<ItemFactura> items;
 	
+	private Double comision_mp;
+	
 	public Factura() {
 		this.items = new ArrayList<>();
 	}
@@ -66,9 +68,15 @@ public class Factura implements Serializable{
 		this.createAt = new Date();
 	}
 	
-	
+	public Double getComision_mp() {
+		return comision_mp;
+	}
+
+	public void setComision_mp(Double comision_mp) {
+		this.comision_mp = comision_mp;
+	}
+
 	public Double getTotal() {
-		
 		return total;
 	}		
 	
@@ -94,9 +102,6 @@ public class Factura implements Serializable{
 
 	public void setTotal() {
 		Double total = 0.0;
-//		for (ItemFactura itemFactura : items) {
-//			total += itemFactura.getImporte() + itemFactura.getComision();
-//		}
 		this.total = total ;
 	}
 

@@ -52,6 +52,7 @@ public class FacturaServiceImpl implements IFacturaService {
 	@Override
 	@Transactional
 	public Factura saveFactura(Factura factura) {
+		if( factura.getMercadopago() != null ) comisionMP(factura);
 		//Se recorren los items de la factura
 		for (ItemFactura item : factura.getItems()) {
 			boolean consignacion = false;
@@ -89,9 +90,16 @@ public class FacturaServiceImpl implements IFacturaService {
 			item.setConsignacion(consignacion);
 			item.setItems_inventario(inventAfect);
 		}
-		//Se registra factura en la cajachica
-		//cajaService.registroCaja(factura);
 		return facturasRepo.save(factura);
+	}
+	
+	//Comision mercadopago
+	private Factura comisionMP(Factura factura) {
+		Double mercadoPago = factura.getMercadopago();
+		Double comision_mp = (mercadoPago * 5)/100;
+		factura.setComision_mp(comision_mp);
+		factura.setTotal(factura.getTotal()+comision_mp);
+		return factura;
 	}
 	
 	

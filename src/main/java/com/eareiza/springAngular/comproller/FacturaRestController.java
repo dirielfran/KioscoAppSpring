@@ -23,17 +23,29 @@ import com.eareiza.springAngular.model.entity.Factura;
 import com.eareiza.springAngular.model.entity.ItemFactura;
 import com.eareiza.springAngular.model.entity.Producto;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class FacturaRestController.
+ */
 @CrossOrigin(origins = {"http://localhost:4200","*"})
 @RestController
 @RequestMapping("/api")
 public class FacturaRestController {
 
+	/** The fact serv. */
 	@Autowired
 	private IFacturaService factServ;
 	
+	/** The producto serv. */
 	@Autowired
 	private IProductoService productoServ;
 	
+	/**
+	 * Show.
+	 *
+	 * @param idFactura the id factura
+	 * @return the factura
+	 */
 	@Secured({"ROLE_ADMIN", "ROLE_USER"})
 	@GetMapping("/facturas/{id}")
 	@ResponseStatus(HttpStatus.OK)
@@ -41,6 +53,11 @@ public class FacturaRestController {
 		return factServ.findById(idFactura);
 	}
 	
+	/**
+	 * Delete.
+	 *
+	 * @param idFactura the id factura
+	 */
 	@Secured({"ROLE_ADMIN"})
 	@DeleteMapping("/facturas/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
@@ -55,10 +72,17 @@ public class FacturaRestController {
 		factServ.deleteFactura(idFactura);
 	}
 	
+	/**
+	 * Crear factura.
+	 *
+	 * @param factura the factura
+	 * @return the factura
+	 */
 	@Secured({"ROLE_ADMIN", "ROLE_USER"})
 	@PostMapping("/facturas")
 	@ResponseStatus(HttpStatus.CREATED)
 	public Factura crearFactura(@RequestBody Factura factura) {
+		//Recorro items y descuento cantidad en producto
 		for (ItemFactura item : factura.getItems()) {			
 			Producto producto = item.getProducto();
 			//calculo de existencia

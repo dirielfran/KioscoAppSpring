@@ -122,6 +122,7 @@ public class DashboardController {
 			productosTop = dashboardService.findProductosTopMes();
 			//Se recupera el patrimonio
 			patrimonio = dashboardService.findPatrimonio();
+			System.out.println("Controlador Dolar: "+patrimonio);
 		} catch (DataAccessException e) {
 			response.put("mensaje", "Error a realizar la consulta en la base de Datos.");
 			response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));

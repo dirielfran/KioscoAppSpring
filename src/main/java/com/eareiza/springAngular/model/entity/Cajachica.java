@@ -32,8 +32,11 @@ public class Cajachica implements Serializable{
 	private Date fecha;
 	
 	private Double saldomp;
+	private Double saldopy;
+	private Double saldopv;
 	private Double saldoefectivo;
 	private Double monto;
+	private Boolean transferencia;
 	
 	
 	@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
@@ -55,6 +58,14 @@ public class Cajachica implements Serializable{
 
 	public Cajachica() {
 		this.fecha = new Date();
+	}
+	
+	public Boolean getTransferencia() {
+		return transferencia;
+	}
+	
+	public void setTransferencia(Boolean transferencia) {
+		this.transferencia = transferencia;
 	}
 	
 	public Long getId() {
@@ -99,9 +110,6 @@ public class Cajachica implements Serializable{
 	public void setGasto(Gastos gasto) {
 		this.gasto = gasto;
 	}
-	
-	
-
 	public Caja getCaja() {
 		return caja;
 	}
@@ -110,12 +118,26 @@ public class Cajachica implements Serializable{
 		this.caja = caja;
 	}
 
+	public Double getSaldopy() {
+		return saldopy;
+	}
+
+	public void setSaldopy(Double saldopy) {
+		this.saldopy = saldopy;
+	}
+
+	public Double getSaldopv() {
+		return saldopv;
+	}
+
+	public void setSaldopv(Double saldopv) {
+		this.saldopv = saldopv;
+	}
+
 	@Override
 	public String toString() {
-		return "Cajachica [id=" + id + ", fecha=" + fecha + ", saldomp=" + saldomp + ", saldoefectivo=" + saldoefectivo
-				+ ", monto=" + monto + ", factura=" + factura + ", gasto=" + gasto + "]";
+		return "Cajachica [id=" + id + ", fecha=" + fecha + ", saldomp=" + saldomp + ", saldopy=" + saldopy
+				+ ", saldopv=" + saldopv + ", saldoefectivo=" + saldoefectivo + ", monto=" + monto + ", factura="
+				+ factura + ", gasto=" + gasto + ", caja=" + caja + "]";
 	}
-	
-	
-
 }

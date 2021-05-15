@@ -28,8 +28,27 @@ public class Comision implements Serializable{
 	private Producto producto;
 	
 	private Double comision;
-
 	
+	private String tipo;
+	
+	private String code;
+	
+	public String getTipo() {
+		return tipo;
+	}
+
+	public void setTipo(String tipo) {
+		this.tipo = tipo;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
 	public Long getId() {
 		return id;
 	}

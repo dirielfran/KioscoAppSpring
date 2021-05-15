@@ -23,35 +23,58 @@ import com.eareiza.springAngular.model.repository.IFacturaRepository;
 import com.eareiza.springAngular.model.repository.IItemFacturaRepository;
 import com.eareiza.springAngular.model.repository.IProductoRepository;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class FacturaServiceImpl.
+ */
 @Service
 public class FacturaServiceImpl implements IFacturaService {
 
+	/** The facturas repo. */
 	@Autowired
 	private IFacturaRepository facturasRepo;
 	
+	/** The item inv serv. */
 	@Autowired
 	private IItemInventarioService itemInvServ;
 	
+	/** The comision repo. */
 	@Autowired
 	private IComisionRepository comisionRepo;
 	
+	/** The item fact repo. */
 	@Autowired 
 	private IItemFacturaRepository itemFactRepo;
 	
+	/** The producto repo. */
 	@Autowired
 	private IProductoRepository productoRepo;
 	
+	/**
+	 * Find by id.
+	 *
+	 * @param idFactura the id factura
+	 * @return the factura
+	 */
 	@Override
 	@Transactional(readOnly = true)
 	public Factura findById(Long idFactura) {
-		return facturasRepo.findById(idFactura).orElse(null);
+		Factura factura = facturasRepo.findById(idFactura).orElse(null);
+		return factura;
 	}
 
 		
-	//Metodo para la creacion de una factura
+	/**
+	 * Save factura. Metodo para la creacion de una factura
+	 *
+	 * @param factura que se crea
+	 * @return Factura Retorna la Objeto de tipo factura creado
+	 */	
 	@Override
 	@Transactional
 	public Factura saveFactura(Factura factura) {
+		//Se asina comision en a la factura en caso de existir code comision
+		if( factura.getTipopago() != null ) asignacionComision(factura);
 		//Se recorren los items de la factura
 		for (ItemFactura item : factura.getItems()) {
 			boolean consignacion = false;
@@ -95,7 +118,25 @@ public class FacturaServiceImpl implements IFacturaService {
 	}
 	
 	
+	/**
+	 * Asignacion comision. Metodo que asigna comision a una factura
+	 *
+	 * @param factura Es la factura a que se le asigna la comision
+	 */
+	private void asignacionComision(Factura factura) {
+		List<Comision> comisiones = (List<Comision>) comisionRepo.findAll();
+		//TODO falta exception en caso de que factura no tenga codigo de comision
+		Comision comision = comisiones.stream()
+		.filter(comi -> factura.getTipopago().get("code").equals(comi.getCode()))
+		.findFirst().get();
+		factura.setComision(comision);
+	}
 
+	/**
+	 * Delete factura.
+	 *
+	 * @param idFactura the id factura
+	 */
 	//Metodo para borrar una factura
 	@Override
 	@Transactional
@@ -145,6 +186,12 @@ public class FacturaServiceImpl implements IFacturaService {
 
 
 
+	/**
+	 * Modifico factura.
+	 *
+	 * @param factura the factura
+	 * @return the factura
+	 */
 	@Override
 	@Transactional
 	public Factura modificoFactura(Factura factura) {
@@ -152,6 +199,11 @@ public class FacturaServiceImpl implements IFacturaService {
 	}
 
 
+	/**
+	 * Find consignacion.
+	 *
+	 * @return the list
+	 */
 	@Override
 	@Transactional(readOnly = true)
 	public List<ConsignacionDto> findConsignacion() {
@@ -170,12 +222,23 @@ public class FacturaServiceImpl implements IFacturaService {
 	}
 
 
+	/**
+	 * Save item factura.
+	 *
+	 * @param item the item
+	 */
 	@Override
 	public void saveItemFactura(ItemFactura item) {
 		itemFactRepo.save(item);
 	}
 
 
+	/**
+	 * Find items factura.
+	 *
+	 * @param idProducto the id producto
+	 * @return the list
+	 */
 	@Override
 	public List<ItemFactura> findItemsFactura(Long idProducto) {
 		 Optional<Producto> opt = productoRepo.findById(idProducto);
@@ -187,6 +250,12 @@ public class FacturaServiceImpl implements IFacturaService {
 	}
 
 
+	/**
+	 * Find item factura.
+	 *
+	 * @param idItem the id item
+	 * @return the item factura
+	 */
 	@Override
 	public ItemFactura findItemFactura(Long idItem) {
 		return itemFactRepo.findById(idItem).orElse(null);

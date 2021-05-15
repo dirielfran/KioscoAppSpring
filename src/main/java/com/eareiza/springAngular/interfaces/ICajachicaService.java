@@ -1,5 +1,7 @@
 package com.eareiza.springAngular.interfaces;
 
+import java.util.Map;
+
 import com.eareiza.springAngular.model.entity.Caja;
 import com.eareiza.springAngular.model.entity.Cajachica;
 import com.eareiza.springAngular.model.entity.Factura;
@@ -18,5 +20,6 @@ public interface ICajachicaService {
 	public Cajachica findByFactura(Long id);
 	public Cajachica findByGasto(Long id);
 	public void deleteCaja(Long id);
+	public void transaferenciaSaldo(Map<String, String> mapa);
 	
 }

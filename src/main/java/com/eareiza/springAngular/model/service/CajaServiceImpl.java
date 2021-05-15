@@ -45,6 +45,13 @@ public class CajaServiceImpl implements ICajaService {
 		return cajaRepo.findById(idCaja).orElse(null);
 	}
 
+	/**
+	 * Metodo saveCaja.  Registra la caja y los movimientos de saldo de cada una de las 
+	 * facturas que pertenecen a la caja
+	 *
+	 * @param caja Objeto de tipo Caja representa los movimientos de saldo 
+	 * @return caja. Objeto de tipo Caja creado
+	 */
 	@Override
 	@Transactional()
 	public Caja saveCaja(Caja caja) {

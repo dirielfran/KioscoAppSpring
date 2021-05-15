@@ -53,8 +53,7 @@ public class ItemFactura implements Serializable {
 
 	private Double cantinv;
 
-	private Double comision;
-	
+	private Double comision;	
 	
 	private Boolean consignacion = false;
 	

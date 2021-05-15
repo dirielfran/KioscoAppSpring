@@ -36,28 +36,47 @@ import com.eareiza.springAngular.model.entity.Cliente;
 import com.eareiza.springAngular.model.entity.Factura;
 import com.eareiza.springAngular.model.entity.RetiroCaja;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class CajaController.
+ */
 @RestController
 @RequestMapping("/api")
 @CrossOrigin(origins = {"http://localhost:4200","*"})
 public class CajaController {
 
+	/** The caja service. */
 	@Autowired
 	ICajaService cajaService;
 	
+	/** The factura service. */
 	@Autowired
 	IFacturaService facturaService;
 	
+	/** The retiro service. */
 	@Autowired
 	IRetiroCajaService retiroService;
 	
+	/** The cajachica service. */
 	@Autowired
 	ICajachicaService cajachicaService;
 	
+	/**
+	 * Cajas.
+	 *
+	 * @return the list
+	 */
 	@GetMapping("/caja")
 	public List<Caja> cajas(){
 		return cajaService.findAll();
 	}
 	
+	/**
+	 * Caja page.
+	 *
+	 * @param page the page
+	 * @return the page
+	 */
 	@Secured({"ROLE_ADMIN","ROLE_USER"})
 	@GetMapping("/caja/page/{page}")
 	public Page<Caja> cajaPage(@PathVariable Integer page){
@@ -66,6 +85,12 @@ public class CajaController {
 	}
 	
 	
+	/**
+	 * Show caja.
+	 *
+	 * @param idCaja the id caja
+	 * @return the response entity
+	 */
 	//Se recupera caja por id
 	@Secured({"ROLE_ADMIN","ROLE_USER"})
 	@GetMapping("/caja/{id}")
@@ -90,6 +115,13 @@ public class CajaController {
 		return new ResponseEntity<Caja>(caja, HttpStatus.OK);
 	}
 	
+	/**
+	 * Save caja. Metodo que ecibe objeto caja rn el body y crea la caja
+	 *
+	 * @param caja Obj Caja que se recupera del body
+	 * @param result Objeto de tipo BindingRsult utilizado para el manejo de erores
+	 * @return ResponseEntity con objeto map que incluye mensaje y objeto entidad
+	 */
 	//Metodo para la creacion de caja
 	@Secured({"ROLE_ADMIN", "ROLE_USER"})
 	@PostMapping("/caja")
@@ -98,11 +130,8 @@ public class CajaController {
 		Map<String, Object> response = new HashMap<>();
 		if(result.hasErrors()) {
 			List<String> errores = result.getFieldErrors()
-				//Se convierte en stream
 				.stream()
-				//Cada error se convierte en un string
 				.map(error -> "El campo '"+error.getField()+"' "+error.getDefaultMessage())
-				//Se convierte en una lista
 				.collect(Collectors.toList());
 			response.put("errores", errores);
 			return new ResponseEntity<Map<String, Object>>(response,HttpStatus.BAD_REQUEST);
@@ -120,7 +149,14 @@ public class CajaController {
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
 	}
 	
-	//Metodo para modificar Caja
+	/**
+	 * Update caja.Metodo para modificar Caja
+	 *
+	 * @param caja the caja
+	 * @param result the result
+	 * @param idCaja the id caja
+	 * @return the response entity
+	 */
 	@Secured("ROLE_ADMIN")
 	@PutMapping("/caja/{id}")
 	public ResponseEntity<?> updateCaja(@Valid @RequestBody Caja caja,
@@ -166,6 +202,12 @@ public class CajaController {
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
 	}
 	
+	/**
+	 * Delete caja.
+	 *
+	 * @param idCaja the id caja
+	 * @return the response entity
+	 */
 	//Metodo para eliminar caja
 	@Secured({"ROLE_ADMIN"})
 	@DeleteMapping("/caja/{id}")
@@ -185,17 +227,34 @@ public class CajaController {
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
 	}
 	
+	/**
+	 * Estado cuenta.
+	 *
+	 * @return the boolean
+	 */
 	@GetMapping("/caja/estado")
 	public Boolean estadoCuenta(){
 		return cajaService.countByEstadoCaja("Abierto")>0? true:false;
 	}
 	
+	/**
+	 * Busca cliente.
+	 *
+	 * @return the integer
+	 */
 	@GetMapping("/caja/buscacliente")
 	public Integer buscaCliente(){
 		Caja caja = cajaService.buscarXEstado("Abierto");  
 		return (caja!=null)?caja.getCliente().getId():0;
 	}
 	
+	
+	/**
+	 * Metodo de Cierre de caja 
+	 *
+	 * @param diferencia, diferencia en efectivo con la que cierra cada caja
+	 * @return the integer
+	 */
 	//Metodo de cierre de una caja
 	@Secured({"ROLE_ADMIN", "ROLE_USER"})
 	@GetMapping("/caja/cerrarcaja/{diferencia}")
@@ -204,6 +263,8 @@ public class CajaController {
 		Caja caja = cajaService.buscarXEstado("Abierto");
 		Double venta = 0D;
 		Double mercadopago = 0D;
+		Double puntoVenta = 0D;
+		Double pedidosYa = 0D;
 		//Se añade diferencia a la caja
 		caja.setDiferencia(diferencia);
 		//Se obtiene el cliente de la caja
@@ -215,6 +276,8 @@ public class CajaController {
 			item.setCliente(null);
 			venta += item.getTotal();
 			mercadopago += item.getMercadopago() != null ? item.getMercadopago(): 0D;
+			puntoVenta += item.getPuntoventa() != null ? item.getPuntoventa(): 0D;
+			pedidosYa += item.getPedidosya() != null ? item.getPedidosya(): 0D;
 			facturaService.modificoFactura(item);
 		}
 		//Proceso para el registro de retiros en caja
@@ -229,6 +292,8 @@ public class CajaController {
 		}		
 		caja.setRetiros(totalRetiros);
 		caja.setMercadopago(mercadopago);
+		caja.setPedidosya(pedidosYa);
+		caja.setPuntoventa(puntoVenta);
 		caja.setVenta(venta);
 		caja.setEstado("Cerrado");
 		caja.setFechaclose(new Date());
@@ -237,6 +302,11 @@ public class CajaController {
 		return caja.getCliente().getId();
 	}
 	
+	/**
+	 * Gets the gastos.
+	 *
+	 * @return the gastos
+	 */
 	//Se recuperan total de diferencias por mes
 	@Secured({"ROLE_ADMIN", "ROLE_USER"})
 	@GetMapping("/caja/diferenciasxmes")

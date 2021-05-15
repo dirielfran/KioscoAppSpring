@@ -39,6 +39,8 @@ public class Caja implements Serializable{
 	private Double venta;
 	private Double retiros;
 	private Double mercadopago;
+	private Double pedidosya;
+	private Double puntoventa;
 	private Double iniciocaja = 2000.0;
 	private Double diferencia;
 	private Double ganancia;
@@ -69,6 +71,22 @@ public class Caja implements Serializable{
 		this.facturas = new ArrayList<>();
 		this.retirosCaja = new ArrayList<>();
 	}	
+
+	public Double getPedidosya() {
+		return pedidosya;
+	}
+
+	public void setPedidosya(Double pedidosya) {
+		this.pedidosya = pedidosya;
+	}
+
+	public Double getPuntoventa() {
+		return puntoventa;
+	}
+
+	public void setPuntoventa(Double puntoventa) {
+		this.puntoventa = puntoventa;
+	}
 
 	public Double getRetiros() {
 		return retiros;
@@ -192,6 +210,15 @@ public class Caja implements Serializable{
 
 	public void setRetirosCaja(List<RetiroCaja> retirosCaja) {
 		this.retirosCaja = retirosCaja;
+	}
+	
+	@Override
+	public String toString() {
+		return "Caja [id=" + id + ", fechaopen=" + fechaopen + ", fechaclose=" + fechaclose + ", fechamod=" + fechamod
+				+ ", venta=" + venta + ", retiros=" + retiros + ", mercadopago=" + mercadopago + ", pedidosya="
+				+ pedidosya + ", puntoventa=" + puntoventa + ", iniciocaja=" + iniciocaja + ", diferencia=" + diferencia
+				+ ", ganancia=" + ganancia + ", estado=" + estado + ", observacion=" + observacion + ", facturas="
+				+ facturas + ", retirosCaja=" + retirosCaja + ", cliente=" + cliente + "]";
 	}
 
 

@@ -16,18 +16,21 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
+@EqualsAndHashCode(callSuper = true)
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "facturas_items")
 @JsonIgnoreProperties (ignoreUnknown = true)
-public class ItemFactura implements Serializable {
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+public class ItemFactura extends EntityCommon implements Serializable {
 
 	private Double cantidad;
-
 	private Double precio;
 
 	// Se mapea la relacion con tabla Producto
@@ -56,85 +59,6 @@ public class ItemFactura implements Serializable {
 	private Double comision;	
 	
 	private Boolean consignacion = false;
-	
-	public Boolean getConsignacion() {
-		return consignacion;
-	}
-
-	public void setConsignacion(Boolean consignacion) {
-		this.consignacion = consignacion;
-	}
-
-	public Double getComision() {
-		return comision;
-	}
-
-	public void setComision(Double comision) {
-		this.comision = comision;
-	}
-
-	public ItemInventario getItem_inventario() {
-		return item_inventario;
-	}
-
-	public void setItem_inventario(ItemInventario item_inventario) {
-		this.item_inventario = item_inventario;
-	}
-
-	public Double getCantinv() {
-		return cantinv;
-	}
-
-	public void setCantinv(Double cantinv) {
-		this.cantinv = cantinv;
-	}
-
-	public Double getImporte() {
-		return cantidad.doubleValue() * producto.getPrecio();
-	}
-
-	public List<ItemInventario> getItems_inventario() {
-		return items_inventario;
-	}
-
-	public void setItems_inventario(List<ItemInventario> items_inventario) {
-		this.items_inventario = items_inventario;
-	}
-
-	public Producto getProducto() {
-		return producto;
-	}
-
-	public void setProducto(Producto producto) {
-		this.producto = producto;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public Double getCantidad() {
-		return cantidad;
-	}
-
-	public void setCantidad(Double cantidad) {
-		this.cantidad = cantidad;
-	}
-
-	public Double getPrecio() {
-		return precio;
-	}
-
-	public void setPrecio(Double precio) {
-		this.precio = precio;
-	}
 
 	private static final long serialVersionUID = 1L;
-	
-	
-
 }

@@ -24,32 +24,30 @@ import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
+@EqualsAndHashCode(callSuper = true)
+@Data
 @Entity
+@AllArgsConstructor
 @Table(name="facturas")
 @JsonIgnoreProperties (ignoreUnknown = true)
-public class Factura implements Serializable{
-	
+public class Factura extends EntityCommon implements Serializable{
 
-	private static final long serialVersionUID = 1L;
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
 	private String descripcion;
 	private String observacion;	
 	private Double mercadopago;
 	private Double pedidosya;
 	private Double puntoventa;
 	private Double montocomision;
+	private Double pedidosyaefectivo;
 	
 	@Transient
 	private Map<String, String> tipopago;
 	
 	private Double total;
-	
-	@Column(name = "create_at")
-	@Temporal(TemporalType.DATE)
-	private Date createAt;
 		
 	@JsonIgnoreProperties(value = {"facturas", "hibernateLazyInitializer", "handler"}, allowSetters = true)
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -75,129 +73,5 @@ public class Factura implements Serializable{
 		this.items = new ArrayList<>();
 	}
 
-	@PrePersist
-	public void prePersistFecha() {
-		this.createAt = new Date();
-	}
-	
-	public Map<String, String> getTipopago() {
-		return tipopago;
-	}
-
-	public void setTipopago(Map<String, String> tipopago) {
-		this.tipopago = tipopago;
-	}
-
-	public Double getMontocomision() {
-		return montocomision;
-	}
-
-	public void setMontocomision(Double montocomision) {
-		this.montocomision = montocomision;
-	}
-
-	public Comision getComision() {
-		return comision;
-	}
-
-	public void setComision(Comision comision) {
-		this.comision = comision;
-	}
-
-	public Double getPedidosya() {
-		return pedidosya;
-	}
-
-	public void setPedidosya(Double pedidosya) {
-		this.pedidosya = pedidosya;
-	}
-
-	public Double getPuntoventa() {
-		return puntoventa;
-	}
-
-	public void setPuntoventa(Double puntoventa) {
-		this.puntoventa = puntoventa;
-	}
-
-	public Double getTotal() {
-		
-		return total;
-	}		
-	
-	public Caja getCaja() {
-		return caja;
-	}
-
-	public void setCaja(Caja caja) {
-		this.caja = caja;
-	}
-
-	public void setTotal(Double total) {
-		this.total = total;
-	}
-
-	public Double getMercadopago() {
-		return mercadopago;
-	}
-
-	public void setMercadopago(Double mercadopago) {
-		this.mercadopago = mercadopago;
-	}
-
-	public List<ItemFactura> getItems() {
-		return items;
-	}
-
-	public void setItems(List<ItemFactura> items) {
-		this.items = items;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getDescripcion() {
-		return descripcion;
-	}
-
-	public void setDescripcion(String descripcion) {
-		this.descripcion = descripcion;
-	}
-
-	public String getObservacion() {
-		return observacion;
-	}
-
-	public void setObservacion(String observacion) {
-		this.observacion = observacion;
-	}
-
-	public Date getCreateAt() {
-		return createAt;
-	}
-
-	public void setCreateAt(Date createAt) {
-		this.createAt = createAt;
-	}
-
-	public Cliente getCliente() {
-		return cliente;
-	}
-
-	public void setCliente(Cliente cliente) {
-		this.cliente = cliente;
-	}
-
-	@Override
-	public String toString() {
-		return "Factura [id=" + id + ", descripcion=" + descripcion + ", observacion=" + observacion + ", mercadopago="
-				+ mercadopago + ", pedidosya=" + pedidosya + ", puntoventa=" + puntoventa + ", montocomision="
-				+ montocomision + ", tipopago=" + tipopago + ", total=" + total + ", createAt=" + createAt
-				+ ", cliente=" + cliente + ", caja=" + caja + ", items=" + items + ", comision=" + comision + "]";
-	}
+	private static final long serialVersionUID = 1L;
 }

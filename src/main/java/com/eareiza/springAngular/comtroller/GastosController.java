@@ -1,8 +1,6 @@
-package com.eareiza.springAngular.comproller;
+package com.eareiza.springAngular.comtroller;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -18,7 +16,6 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
@@ -36,15 +33,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
 import com.eareiza.springAngular.interfaces.ICajachicaService;
 import com.eareiza.springAngular.interfaces.IGastosService;
 import com.eareiza.springAngular.model.entity.Cajachica;
 import com.eareiza.springAngular.model.entity.Gastos;
 import com.eareiza.springAngular.model.service.EnvioMail;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController
 @RequestMapping("/api")
@@ -63,13 +57,7 @@ public class GastosController {
 	
 	@Value("${empleosapp.ruta.imagenes}")
 	private String ruta;
-	
-	// mapeamos la solicitud
-//	@RequestMapping(value="/create", method = RequestMethod.GET )
-//	public String crear(@ModelAttribute Gastos gasto, Model modelo) {
-//		modelo.addAttribute("gasto", new Gastos());
-//        return "gastos/formGastos";
-//	}
+
 	
 	@GetMapping("/gastos/page/{page}")
 	public Page<Gastos> indicePaginado(@PathVariable("page") Integer pagina) {
@@ -83,54 +71,12 @@ public class GastosController {
 		return cajaService.findTopByOrderByIdDesc();
 	}
 	
-	// mapeamos la solicitud
-//	@PostMapping("/guardar")
-//	public String guardar(Gastos gasto, BindingResult resultado, RedirectAttributes redirect,
-//							@RequestParam("archivoImagen") MultipartFile multiPart, HttpServletRequest request) {
-//		if(!multiPart.isEmpty()) {
-//			String nombreImagen = Utileria.guardarArchivo(multiPart, ruta);
-//			gasto.setImagen(nombreImagen);
-//		}
-//		
-//		// se recorre la lista de errores g
-//		for (ObjectError error : resultado.getAllErrors()) {
-//			System.out.println("Error: " + error.getDefaultMessage());
-//			return "gastos/formGastos";
-//		}		
-//		
-//		//Mandamos a la vista un objeto flash que muestra un mensaje 
-//		serviceGastos.guardar(gasto);
-//		redirect.addFlashAttribute("mensaje", "El gasto fue registrado con exito.");
-//		EnvioMail enviomail = new EnvioMail();
-//		String body ="Se ha registrado un gasto con los siguientes detalles: <br> "
-//				+ "Clasificación: "+gasto.getClasificacion()+"<br>"
-//				+ "Id: "+gasto.getId()+"<br>"
-//				+ "Fecha de la factura: "+gasto.getFechaFact()+"<br>"
-//				+ "Fecha de Carga: "+gasto.getFechaCarga()+"<br>"
-//				+ "Usuario: "+gasto.getUsuario()+"<br>"
-//				+ "Proveedor: "+gasto.getProveedor()+"<br>"
-//				+ "Nombre unico de imagen: "+gasto.getImagen()+"<br>"
-//				+ "Descripcion: "+gasto.getDescripcion()+"<br>";
-//		String subject="Un gasto se ha registrado con exito";
-//		List<Usuario> emails= serviceUsuario.buscarEmailByPerfil("ROLE_ADMIN");
-//		for (Usuario usuario : emails) {
-//			List<Role> roles = usuario.getRoles();
-//			for (Role role : roles) {
-//				if(role.getNombre().equals("ROLE_ADMIN")) {
-//					enviomail.sendEmail(usuario.getEmail(), subject, body);
-//				}
-//			}
-//		}
-//		
-//		System.out.println("Gasto: " + gasto);
-//		return "redirect:/gastos/indexPagina";
-//	}
-	
 	//Se crea Cliente
 	//Se le añade seguridad a los endpoint por url
 	@Secured({"ROLE_ADMIN","ROLE_USER"})
 	@PostMapping("/gastos")
-	public ResponseEntity<?> saveGastos(@Valid @RequestBody Gastos gasto, BindingResult result, @RequestParam(value = "user") String user) {
+	public ResponseEntity<?> saveGastos(@Valid @RequestBody Gastos gasto, BindingResult result,
+										@RequestParam(value = "user") String user) {
 		Gastos gastoNew = null;
 		//Se agrega map para el envio de mensaje y obj en el response
 		Map<String, Object> response = new HashMap<>();
@@ -169,46 +115,7 @@ public class GastosController {
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
 	}
 	
-	//Mapeamos por el get 
-//	@GetMapping(value="/edit/{id}")
-//	public String editar(@PathVariable("id")int idGasto, Model modelo) {
-//		Gastos gasto = serviceGastos.buscarPorId(idGasto);
-//		//Se a�ade a� model que necesita el formulario para renderizar los datos 
-//		modelo.addAttribute("gasto",gasto);		
-//		return "gastos/formGastos";
-//	}
-	
-	//mapeamos la solicitud 
-//	@GetMapping(value="/delete/{id}")
-//	public String eliminar(@PathVariable("id")int idEliminar, RedirectAttributes redirect) {
-//		//Declaramos un objeto de tipo pelicula
-//		Gastos gasto = serviceGastos.buscarPorId(idEliminar);
-//		//se elimina por id una pelicula
-//		serviceGastos.borrarGasto(idEliminar);
-//		//se a�ade un objeto de tipo RedirectAttributes para enviar mensaje en un redirect
-//		redirect.addFlashAttribute("mensaje", "El gasto fue eliminado.");
-//		EnvioMail enviomail = new EnvioMail();
-//		String body ="Se ha eliminado un registro de gasto con los siguientes detalles: <br> "
-//				+ "Clasificación: "+gasto.getClasificacion()+"<br>"
-//				+ "Id: "+gasto.getId()+"<br>"
-//				+ "Fecha de la factura: "+gasto.getFechaFact()+"<br>"
-//				+ "Fecha de Carga: "+gasto.getFechaCarga()+"<br>"
-//				+ "Usuario: "+gasto.getUsuario()+"<br>"
-//				+ "Proveedor: "+gasto.getProveedor()+"<br>"
-//				+ "Nombre unico de imagen: "+gasto.getImagen()+"<br>"
-//				+ "Descripcion: "+gasto.getDescripcion()+"<br>";
-//		String subject="Un registro de gasto se ha eliminado";
-//		List<Usuario> emails= serviceUsuario.buscarEmailByPerfil("ROLE_ADMIN");
-//		for (Usuario usuario : emails) {
-//			List<Role> roles = usuario.getRoles();
-//			for (Role role : roles) {
-//				if(role.getNombre().equals("ROLE_ADMIN")) {
-//					enviomail.sendEmail(usuario.getEmail(), subject, body);
-//				}
-//			}
-//		}
-//		return "redirect:/gastos/indexPagina";		
-//	}
+
 	
 	//delete de Gasto
 	//Se le añade seguridad a los endpoint por url

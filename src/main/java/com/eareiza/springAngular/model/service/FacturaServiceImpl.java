@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import com.eareiza.springAngular.utileria.Utileria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,6 +50,8 @@ public class FacturaServiceImpl implements IFacturaService {
 	/** The producto repo. */
 	@Autowired
 	private IProductoRepository productoRepo;
+
+	private static final Utileria util = new Utileria();
 	
 	/**
 	 * Find by id.
@@ -75,7 +78,6 @@ public class FacturaServiceImpl implements IFacturaService {
 	public Factura saveFactura(Factura factura) {
 		//Se asina comision en a la factura en caso de existir code comision
 		if( factura.getTipopago() != null ) asignacionComision(factura);
-		//Se recorren los items de la factura
 		for (ItemFactura item : factura.getItems()) {
 			boolean consignacion = false;
 			Comision comision = comisionRepo.findbyProducto(item.getProducto().getId());
@@ -84,20 +86,16 @@ public class FacturaServiceImpl implements IFacturaService {
 			List<ItemInventario> items = itemInvServ.getInventarios(item.getProducto().getId(), "Activo");
 			Double cantidad = BigDecimal.valueOf(item.getCantidad()).setScale(3, RoundingMode.HALF_UP).doubleValue();
 			List<ItemInventario> inventAfect = new ArrayList<>();
-			//Se recorren los inventarios activos
 			for (ItemInventario itemInv : items) {
 				if(itemInv.getConsignacion()==true) consignacion = true;
 				if (cantidad > 0) {
 					Double existencia =  BigDecimal.valueOf(itemInv.getExistencia()).setScale(3, RoundingMode.HALF_UP).doubleValue();
 					//Se valida si la existencia es menor o igual
 					if(cantidad <= existencia) {
-						//se disminuye la existencia
 						itemInv.setExistencia(BigDecimal.valueOf(existencia-cantidad).setScale(3, RoundingMode.HALF_UP).doubleValue());
 						cantidad = 0D;
 					}else {
-						//Se setea a cero la existencia del inventario
 						itemInv.setExistencia(0D);
-						//Se disminuye la cantidad para que pueda ser descontada en el siguiente inventario
 						cantidad -= existencia;
 					}
 					if(itemInv.getExistencia() == 0) {
@@ -112,8 +110,7 @@ public class FacturaServiceImpl implements IFacturaService {
 			item.setConsignacion(consignacion);
 			item.setItems_inventario(inventAfect);
 		}
-		//Se registra factura en la cajachica
-		//cajaService.registroCaja(factura);
+		factura.setUser(util.getUsuarioAuth());
 		return facturasRepo.save(factura);
 	}
 	
@@ -195,6 +192,7 @@ public class FacturaServiceImpl implements IFacturaService {
 	@Override
 	@Transactional
 	public Factura modificoFactura(Factura factura) {
+		factura.setUser(util.getUsuarioAuth());
 		return facturasRepo.save(factura);
 	}
 

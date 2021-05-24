@@ -1,4 +1,4 @@
-package com.eareiza.springAngular.comproller;
+package com.eareiza.springAngular.comtroller;
 
 import java.util.HashMap;
 import java.util.List;
@@ -79,7 +79,7 @@ public class PerdidaRestController {
 	//Metodo para la creacion de caja
 	@Secured({"ROLE_ADMIN"})
 	@PostMapping("/perdida")
-	public ResponseEntity<?> savePerdida(@Valid @RequestBody Perdida perdida, BindingResult result){
+	public ResponseEntity<Map<String, Object>> savePerdida(@Valid @RequestBody Perdida perdida, BindingResult result){
 		Perdida perdidaNew = null;
 		Map<String, Object> response = new HashMap<>();
 		if(result.hasErrors()) {

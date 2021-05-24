@@ -18,7 +18,8 @@ import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenCo
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 
 @Configuration
-//habilitar un servidor de autorización (es decir, an AuthorizationEndpointy a TokenEndpoint) en el contexto de la aplicación actual,
+//habilitar un servidor de autorización (es decir, an AuthorizationEndpoint y a TokenEndpoint)
+// en el contexto de la aplicación actual
 @EnableAuthorizationServer
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter{
 
@@ -32,7 +33,8 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 	@Autowired
 	private InfoAdicionalToken infoAdicionalToken;
 
-
+	//Configura las restricciones de seguridad del punto final del token, es
+	// decir, quién puede y quién no puede acceder a él.
 	@Override
 	public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
 		//Genera el token
@@ -41,6 +43,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 		.checkTokenAccess("isAuthenticated()");
 	}
 
+	//configura los detalles del cliente
 	@Override
 	public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
 		//Se almacena en memoria el cliente con su clave

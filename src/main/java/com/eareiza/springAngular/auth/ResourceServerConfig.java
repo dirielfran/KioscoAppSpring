@@ -24,7 +24,11 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter{
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
 		//Se permite a todos el accesso por el metodo get a "/api/clientes"
-		http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/clientes", "/api/personas","/api/clientes/page/**","/api/clientes/page/**", "/api/uploads/img/**", "/images/**").permitAll()
+		http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/clientes",
+				"/api/personas","/api/clientes/page/**",
+				"/api/clientes/page/**",
+				"/api/uploads/img/**", "/images/**").permitAll()
+				.antMatchers("/v2/api-docs", "/swagger-resources/configuration/ui", "/swagger-resources", "/swagger-resources/configuration/security", "/swagger-ui.html", "/webjars/**", "/swagger-ui/**").permitAll()
 		.antMatchers("/chat-webSocket/**").permitAll()
 		.anyRequest().authenticated();
 	}

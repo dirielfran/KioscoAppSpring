@@ -4,6 +4,7 @@ package com.eareiza.springAngular.model.service;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.eareiza.springAngular.utileria.Utileria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +27,8 @@ public class CajaServiceImpl implements ICajaService {
 	
 	@Autowired
 	private ICajachicaService cajaService;
+
+	private final Utileria util= new Utileria();
 	
 	@Override
 	@Transactional(readOnly = true)
@@ -70,10 +73,10 @@ public class CajaServiceImpl implements ICajaService {
 				}				
 				ganancias += item.getComision();
 			}
-			//Se registra factura en la cajachica
 			cajaService.registroCaja(factura);
 		}
 		caja.setGanancia(ganancias);
+		caja.setUser(util.getUsuarioAuth());
 		return cajaRepo.save(caja);
 	}
 

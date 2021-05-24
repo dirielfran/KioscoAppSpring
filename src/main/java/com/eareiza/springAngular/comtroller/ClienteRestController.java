@@ -1,4 +1,4 @@
-package com.eareiza.springAngular.comproller;
+package com.eareiza.springAngular.comtroller;
 
 
 import java.io.IOException;

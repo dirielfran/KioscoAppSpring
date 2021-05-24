@@ -2,7 +2,9 @@ package com.eareiza.springAngular.model.service;
 
 import java.util.Map;
 
+import com.eareiza.springAngular.utileria.Utileria;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,7 +24,9 @@ public class CajachicaServiceImpl implements ICajachicaService{
 	
 	/** The caja repository. */
 	@Autowired
-	ICajaChicaRepository cajaRepo;
+	private ICajaChicaRepository cajaRepo;
+
+	private final Utileria util= new Utileria();
 
 	/**
 	 * Find top by order by id desc.
@@ -38,20 +42,24 @@ public class CajachicaServiceImpl implements ICajachicaService{
 	/**
 	 * Metodo registroCaja. registra la factura en la caja chica afectando los saldos
 	 *
-	 * @param factura. Objeto de tipo Factura, a registran en los saldos.
+	 * @param factura Objeto de tipo Factura, a registran en los saldos.
 	 */
 	public void registroCaja(Factura factura) {
+
 		//TODO trabajar con excepciones
 		Double mercadopago = factura.getMercadopago() != null ? factura.getMercadopago() : 0;
 		Double pedidosYa = factura.getPedidosya() != null ? factura.getPedidosya() : 0;
+		Double pedidosYaEfectivo = factura.getPedidosyaefectivo() != null ? factura.getPedidosyaefectivo() : 0;
 		Double puntoVenta = factura.getPuntoventa() != null ? factura.getPuntoventa() : 0;
 		Double totalFactura = factura.getTotal() != null ? factura.getTotal() : 0;
 		Cajachica cajaOld = cajaRepo.findTopByOrderByIdDesc();
 		Cajachica caja = new Cajachica();
+		caja.setUser(util.getUsuarioAuth());
 		caja.setFactura(factura);
 		caja.setMonto(totalFactura);
 		caja.setSaldomp(cajaOld.getSaldomp()+mercadopago);
 		caja.setSaldopy(cajaOld.getSaldopy()+pedidosYa);
+		caja.setSaldoefectivopy(cajaOld.getSaldoefectivopy()+pedidosYaEfectivo);
 		caja.setSaldopv(cajaOld.getSaldopv()+puntoVenta);
 		caja.setSaldoefectivo(cajaOld.getSaldoefectivo()+(totalFactura - mercadopago - pedidosYa - puntoVenta));
 		cajaRepo.save(caja);
@@ -69,9 +77,11 @@ public class CajachicaServiceImpl implements ICajachicaService{
 		Cajachica cajachica = new Cajachica();
 		cajachica.setMonto(diferencia);
 		cajachica.setCaja(caja);
+		cajachica.setUser(util.getUsuarioAuth());
 		cajachica.setSaldomp(cajaOld.getSaldomp());
 		cajachica.setSaldopv(cajaOld.getSaldopv());
 		cajachica.setSaldopy(cajaOld.getSaldopy());
+		cajachica.setSaldoefectivopy(cajaOld.getSaldoefectivopy());
 		cajachica.setSaldoefectivo(cajaOld.getSaldoefectivo()+diferencia);
 		cajaRepo.save(cajachica);
 	}
@@ -81,45 +91,49 @@ public class CajachicaServiceImpl implements ICajachicaService{
 	/**
 	 * Registro caja. Registro de gastos en caja chica
 	 *
-	 * @param gasto. Objeto de tipo gasto que se registr en cajachica
+	 * @param gasto Objeto de tipo gasto que se registr en cajachica
 	 */
 	public void registroCaja(Gastos gasto) {
 		Cajachica cajaOld = cajaRepo.findTopByOrderByIdDesc();
 		Cajachica caja = new Cajachica();
 		caja.setGasto(gasto);
+		caja.setUser(util.getUsuarioAuth());
 		caja.setMonto(gasto.getMontoPesos());
 		if(gasto.getMetodopago().equals("Efectivo")) {
 			caja.setSaldoefectivo(cajaOld.getSaldoefectivo()-gasto.getMontoPesos());
 			caja.setSaldomp(cajaOld.getSaldomp());
-			caja.setSaldopy(cajaOld.getSaldopy());
-			caja.setSaldopv(cajaOld.getSaldopv());
 		}else {
 			caja.setSaldomp(cajaOld.getSaldomp()-gasto.getMontoPesos());
 			caja.setSaldoefectivo(cajaOld.getSaldoefectivo());
-			caja.setSaldopy(cajaOld.getSaldopy());
-			caja.setSaldopv(cajaOld.getSaldopv());
 		}
+		caja.setSaldopy(cajaOld.getSaldopy());
+		caja.setSaldoefectivopy(cajaOld.getSaldoefectivopy());
+		caja.setSaldopv(cajaOld.getSaldopv());
 		cajaRepo.save(caja);
 	}
 	
 	/**
 	 * Metodo deleteRegistroCaja. resta los saldos de la factura eliminada 
 	 *
-	 * @param factura. Objeto tipo Factura que se elimina
+	 * @param factura Objeto tipo Factura que se elimina
 	 */
 	public void deleteRegistroCaja(Factura factura) {
 		Double mercadopago = factura.getMercadopago() != null ? factura.getMercadopago() : 0;
 		Double pedidosYa   = factura.getPedidosya() != null ? factura.getPedidosya() : 0;
-		Double puntoVenta  = factura.getPuntoventa() != null ? factura.getPuntoventa() : 0; 
+		Double pedidosefectivoYa   = factura.getPedidosyaefectivo() != null ? factura.getPedidosyaefectivo() : 0;
+		Double puntoVenta  = factura.getPuntoventa() != null ? factura.getPuntoventa() : 0;
 		Double totalFactura = factura.getTotal() != null ? factura.getTotal() : 0;
 		Cajachica cajaOld = cajaRepo.findTopByOrderByIdDesc();
 		Cajachica caja = new Cajachica();
+		caja.setUser(util.getUsuarioAuth());
 		//TODO Validar con excepciones los saldos
 		caja.setMonto(factura.getTotal()*(-1));
 		caja.setSaldomp(cajaOld.getSaldomp() - mercadopago);
 		caja.setSaldopv(cajaOld.getSaldopv() - puntoVenta);
 		caja.setSaldopy(cajaOld.getSaldopy() - pedidosYa);
-		caja.setSaldoefectivo(cajaOld.getSaldoefectivo()-(totalFactura - mercadopago - pedidosYa - puntoVenta));
+		caja.setSaldoefectivopy(cajaOld.getSaldoefectivopy() - pedidosefectivoYa);
+		caja.setSaldoefectivo(cajaOld.getSaldoefectivo()-
+				(totalFactura - mercadopago - pedidosYa - puntoVenta - pedidosefectivoYa));
 		cajaRepo.save(caja);
 	}
 	
@@ -127,23 +141,23 @@ public class CajachicaServiceImpl implements ICajachicaService{
 	 * Metodo deleteRegistroCaja. Metodo que calcula y registra los saldos al cargar
 	 * un gasto en sistema
 	 *
-	 * @param gasto. Obj de tipo Gasto que se eliminara 
+	 * @param gasto Obj de tipo Gasto que se eliminara
 	 */
 	public void deleteRegistroCaja(Gastos gasto) {
 		Cajachica cajaOld = cajaRepo.findTopByOrderByIdDesc();
 		Cajachica caja = new Cajachica();
+		caja.setUser(util.getUsuarioAuth());
 		caja.setMonto(gasto.getMontoPesos()*(-1));
 		if(gasto.getMetodopago().equals("Efectivo")) {
 			caja.setSaldoefectivo(cajaOld.getSaldoefectivo()+gasto.getMontoPesos());
 			caja.setSaldomp(cajaOld.getSaldomp());
-			caja.setSaldopy(cajaOld.getSaldopy());
-			caja.setSaldopv(cajaOld.getSaldopv());
 		}else {
 			caja.setSaldomp(cajaOld.getSaldomp()+gasto.getMontoPesos());
 			caja.setSaldoefectivo(cajaOld.getSaldoefectivo());
-			caja.setSaldopy(cajaOld.getSaldopy());
-			caja.setSaldopv(cajaOld.getSaldopv());
 		}
+		caja.setSaldopy(cajaOld.getSaldopy());
+		caja.setSaldoefectivopy(cajaOld.getSaldoefectivopy());
+		caja.setSaldopv(cajaOld.getSaldopv());
 		cajaRepo.save(caja);
 	}
 
@@ -208,6 +222,8 @@ public class CajachicaServiceImpl implements ICajachicaService{
 		Double monto = Double.valueOf(mapa.get("monto"));
 		newCajaChica.setMonto(monto);
 		newCajaChica.setTransferencia(true);
+		newCajaChica.setUser(util.getUsuarioAuth());
+		newCajaChica.setSaldoefectivopy(cajachica.getSaldoefectivopy());
 		switch (mapa.get("origen")) {
 		case "Efectivo":
 			origenEF(mapa.get("destino"), newCajaChica, cajachica, monto);
@@ -226,7 +242,7 @@ public class CajachicaServiceImpl implements ICajachicaService{
 		}
 		cajaRepo.save(newCajaChica);
 	}
-	
+
 	private void origenEF(String destino,Cajachica newCajaChica, Cajachica cajachica, Double monto) {
 		newCajaChica.setSaldoefectivo(cajachica.getSaldoefectivo() - monto);
 		switch (destino) {
@@ -248,7 +264,7 @@ public class CajachicaServiceImpl implements ICajachicaService{
 			break;
 		}
 	}
-	
+
 	private void origenMP(String destino, Cajachica newCajaChica, Cajachica cajachica, Double monto) {
 		newCajaChica.setSaldomp(cajachica.getSaldomp() - monto);
 		switch (destino) {
@@ -270,7 +286,7 @@ public class CajachicaServiceImpl implements ICajachicaService{
 			break;
 		}
 	}
-	
+
 	private void origenPY(String destino, Cajachica newCajaChica, Cajachica cajachica, Double monto) {
 		newCajaChica.setSaldopy(cajachica.getSaldopy() - monto);
 		switch (destino) {
@@ -292,7 +308,7 @@ public class CajachicaServiceImpl implements ICajachicaService{
 			break;
 		}
 	}
-	
+
 	private void origenPV(String destino, Cajachica newCajaChica, Cajachica cajachica, Double monto) {
 		newCajaChica.setSaldopv(cajachica.getSaldopv() - monto);
 		switch (destino) {
@@ -313,5 +329,5 @@ public class CajachicaServiceImpl implements ICajachicaService{
 		default:
 			break;
 		}
-	}	
+	}
 }

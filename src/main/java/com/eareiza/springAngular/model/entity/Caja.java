@@ -22,24 +22,27 @@ import javax.persistence.TemporalType;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
+@EqualsAndHashCode(callSuper = true)
+@Data
+@AllArgsConstructor
 @Entity
 @Table(name = "cajas")
-public class Caja implements Serializable{
+public class Caja extends EntityCommon implements Serializable{
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date fechaopen;
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date fechaclose;
-	@Temporal(TemporalType.DATE)
-	private Date fechamod;
 	private Double venta;
 	private Double retiros;
 	private Double mercadopago;
 	private Double pedidosya;
+	private Double pedidosyaefectivo;
 	private Double puntoventa;
 	private Double iniciocaja = 2000.0;
 	private Double diferencia;
@@ -72,117 +75,12 @@ public class Caja implements Serializable{
 		this.retirosCaja = new ArrayList<>();
 	}	
 
-	public Double getPedidosya() {
-		return pedidosya;
-	}
-
-	public void setPedidosya(Double pedidosya) {
-		this.pedidosya = pedidosya;
-	}
-
-	public Double getPuntoventa() {
-		return puntoventa;
-	}
-
-	public void setPuntoventa(Double puntoventa) {
-		this.puntoventa = puntoventa;
-	}
-
-	public Double getRetiros() {
-		return retiros;
-	}
-
-	public void setRetiros(Double retiros) {
-		this.retiros = retiros;
-	}
-
-	public List<RetiroCaja> getRetiroscaja() {
-		return retirosCaja;
-	}
-	
 	//Se utiliza el metodo addretiro para añadir la lista de retiros y seteo de Caja
 	public void setRetiroscaja(List<RetiroCaja> retiros) {
 		this.retirosCaja.clear();
 		retiros.forEach(this::addRetiro);
 	}
 
-	public List<Factura> getFacturas() {
-		return facturas;
-	}
-
-	public void setFacturas(List<Factura> facturas) {
-		this.facturas = facturas;
-	}
-
-	public Long getId() {
-		return id;
-	}
-	public void setId(Long id) {
-		this.id = id;
-	}
-	public Date getFechaopen() {
-		return fechaopen;
-	}
-	public void setFechaopen(Date fechaopen) {
-		this.fechaopen = fechaopen;
-	}
-	public Date getFechaclose() {
-		return fechaclose;
-	}
-	public void setFechaclose(Date fechaclose) {
-		this.fechaclose = fechaclose;
-	}
-	public Date getFechamod() {
-		return fechamod;
-	}
-	public void setFechamod(Date fechamod) {
-		this.fechamod = fechamod;
-	}
-	public Double getVenta() {
-		return venta;
-	}
-	public void setVenta(Double venta) {
-		this.venta = venta;
-	}
-	public Double getMercadopago() {
-		return mercadopago;
-	}
-	public void setMercadopago(Double mercadopago) {
-		this.mercadopago = mercadopago;
-	}
-	public Double getIniciocaja() {
-		return iniciocaja;
-	}
-	public void setIniciocaja(Double iniciocaja) {
-		this.iniciocaja = iniciocaja;
-	}
-	public Double getDiferencia() {
-		return diferencia;
-	}
-	public void setDiferencia(Double diferencia) {
-		this.diferencia = diferencia;
-	}
-	public String getEstado() {
-		return estado;
-	}
-	public void setEstado(String estado) {
-		this.estado = estado;
-	}
-	public String getObservacion() {
-		return observacion;
-	}
-	public void setObservacion(String observacion) {
-		this.observacion = observacion;
-	}
-	
-	public Cliente getCliente() {
-		return cliente;
-	}
-
-	public void setCliente(Cliente cliente) {
-		this.cliente = cliente;
-	}
-	
 	public void addRetiro(RetiroCaja retiro ) {
 		this.retirosCaja.add(retiro);
 		//relacion inversa
@@ -196,37 +94,9 @@ public class Caja implements Serializable{
 		retiro.setCaja(null);
 	}
 
-	public Double getGanancia() {
-		return ganancia;
-	}
-
-	public void setGanancia(Double ganancia) {
-		this.ganancia = ganancia;
-	}
-
-	public List<RetiroCaja> getRetirosCaja() {
-		return retirosCaja;
-	}
-
-	public void setRetirosCaja(List<RetiroCaja> retirosCaja) {
-		this.retirosCaja = retirosCaja;
-	}
-	
-	@Override
-	public String toString() {
-		return "Caja [id=" + id + ", fechaopen=" + fechaopen + ", fechaclose=" + fechaclose + ", fechamod=" + fechamod
-				+ ", venta=" + venta + ", retiros=" + retiros + ", mercadopago=" + mercadopago + ", pedidosya="
-				+ pedidosya + ", puntoventa=" + puntoventa + ", iniciocaja=" + iniciocaja + ", diferencia=" + diferencia
-				+ ", ganancia=" + ganancia + ", estado=" + estado + ", observacion=" + observacion + ", facturas="
-				+ facturas + ", retirosCaja=" + retirosCaja + ", cliente=" + cliente + "]";
-	}
-
-
-
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -5375172429629965039L;	
-
+	private static final long serialVersionUID = -5375172429629965039L;
 }

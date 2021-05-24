@@ -1,4 +1,4 @@
-package com.eareiza.springAngular.comproller;
+package com.eareiza.springAngular.comtroller;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -182,9 +182,11 @@ public class CajaController {
 			//Se stean modificaciones
 			cajaAct.setFechaopen(caja.getFechaopen());
 			cajaAct.setFechaclose(caja.getFechaclose());
-			cajaAct.setFechamod(caja.getFechamod());
 			cajaAct.setVenta(caja.getVenta());
 			cajaAct.setMercadopago(caja.getMercadopago());
+			cajaAct.setPedidosya(caja.getPedidosya());
+			cajaAct.setPedidosyaefectivo(caja.getPedidosyaefectivo());
+			cajaAct.setPuntoventa(caja.getPuntoventa());
 			cajaAct.setIniciocaja(caja.getIniciocaja());
 			cajaAct.setDiferencia(caja.getDiferencia());
 			cajaAct.setEstado(caja.getEstado());
@@ -255,7 +257,6 @@ public class CajaController {
 	 * @param diferencia, diferencia en efectivo con la que cierra cada caja
 	 * @return the integer
 	 */
-	//Metodo de cierre de una caja
 	@Secured({"ROLE_ADMIN", "ROLE_USER"})
 	@GetMapping("/caja/cerrarcaja/{diferencia}")
 	public Integer cerrarCaja(@PathVariable Double diferencia){
@@ -265,11 +266,10 @@ public class CajaController {
 		Double mercadopago = 0D;
 		Double puntoVenta = 0D;
 		Double pedidosYa = 0D;
+		Double pedidosYaEfectivo = 0D;
 		//Se añade diferencia a la caja
 		caja.setDiferencia(diferencia);
-		//Se obtiene el cliente de la caja
 		Cliente cliente = caja.getCliente();
-		//Se recorre las facturas del cliente
 		for (Factura item : cliente.getFacturas()) {
 			item.setCaja(caja);
 			//El cliente deja de pertenecer a la caja
@@ -278,11 +278,11 @@ public class CajaController {
 			mercadopago += item.getMercadopago() != null ? item.getMercadopago(): 0D;
 			puntoVenta += item.getPuntoventa() != null ? item.getPuntoventa(): 0D;
 			pedidosYa += item.getPedidosya() != null ? item.getPedidosya(): 0D;
+			pedidosYaEfectivo += item.getPedidosyaefectivo() != null ? item.getPedidosyaefectivo(): 0D;
 			facturaService.modificoFactura(item);
 		}
 		//Proceso para el registro de retiros en caja
 		Double totalRetiros = 0D;
-		//Se recorren los retiros del cliente
 		for (RetiroCaja retiro : cliente.getRetirosCaja()) {
 			//Se desvincula el retiro del cliente y se le setea la caja
 			retiro.setCliente(null);
@@ -293,6 +293,7 @@ public class CajaController {
 		caja.setRetiros(totalRetiros);
 		caja.setMercadopago(mercadopago);
 		caja.setPedidosya(pedidosYa);
+		caja.setPedidosyaefectivo(330D);
 		caja.setPuntoventa(puntoVenta);
 		caja.setVenta(venta);
 		caja.setEstado("Cerrado");

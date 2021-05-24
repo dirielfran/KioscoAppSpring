@@ -10,6 +10,8 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.multipart.MultipartFile;
 
 
@@ -80,5 +82,11 @@ public class Utileria {
 			builder.append(CARACTERES.charAt(character));
 		}
 		return builder.toString();
+	}
+
+	//Se obtiene usuario authenticado
+	public String getUsuarioAuth(){
+		String user = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		return user;
 	}
 }

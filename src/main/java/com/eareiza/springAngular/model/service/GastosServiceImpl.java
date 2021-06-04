@@ -123,7 +123,7 @@ public class GastosServiceImpl implements IGastosService{
 	public Double findGanancias() {
 		LocalDate fecha = LocalDate.now();
 		LocalDate desde = fecha.withDayOfMonth(1);
-		LocalDate hasta = fecha.withDayOfMonth(fecha.lengthOfMonth());
+		LocalDate hasta = fecha.withDayOfMonth(1).plusMonths(1);
 		Object obj = repoGastos.findGananciasXMes(desde, hasta);
 		return (Double) obj;
 	}

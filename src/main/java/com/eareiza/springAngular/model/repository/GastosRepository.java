@@ -43,7 +43,7 @@ public interface GastosRepository extends JpaRepository<Gastos, Long> {
 			+ "	inner join productos p on p.id = fi.producto_id"
 			+ "	inner join itemsfactura_itemsinventario piv on fi.id = piv.itemfactura_id"
 			+ "	inner join inventarios_items ii on ii.id = piv.iteminventario_id "
-			+ " where f.create_at between ?1 and ?2", nativeQuery = true )
+			+ " where f.create_at >= ?1 and f.create_at < ?2", nativeQuery = true )
 	public Object findGananciasXMes(LocalDate fechaIni, LocalDate fechaFin);
 	
 	@Query(value="select sum(monto_pesos)/1000, WEEKDAY(fecha_fact) "

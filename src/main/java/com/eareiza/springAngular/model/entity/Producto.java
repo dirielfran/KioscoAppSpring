@@ -19,12 +19,17 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+
 @EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name="productos")
+@SQLDelete(sql = "UPDATE productos SET deleted=true WHERE id = ?")
+@Where(clause = "deleted = false")
 public class Producto extends EntityCommon implements Serializable{
 
 	private String nombre;
@@ -33,6 +38,10 @@ public class Producto extends EntityCommon implements Serializable{
 	private String proveedor;
 	private Double minimo;
 	private Double preciocosto;
+	
+	@Column(name="deleted")
+    private Boolean deleted;
+
 
 	@PrePersist
 	public void prePersistFecha() {

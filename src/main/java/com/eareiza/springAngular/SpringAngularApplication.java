@@ -15,6 +15,7 @@ public class SpringAngularApplication /*implements CommandLineRunner*/ extends S
 	//Importante hacer la inyección de dependencia de JavaMailSender:
     @Autowired
     private JavaMailSender mailSender;
+
 	
 	public static void main(String[] args) {
 		SpringApplication.run(SpringAngularApplication.class, args);

@@ -12,9 +12,10 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-
+@Component
 public class Utileria {
 	
 	public static String guardarArchivo(MultipartFile multiPart, String ruta) {
@@ -89,4 +90,5 @@ public class Utileria {
 		String user = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		return user;
 	}
+
 }

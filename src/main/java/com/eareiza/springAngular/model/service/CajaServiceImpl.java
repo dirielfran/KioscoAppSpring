@@ -4,9 +4,14 @@ package com.eareiza.springAngular.model.service;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.eareiza.springAngular.DTO.CajaDto;
+import com.eareiza.springAngular.utileria.PaginationComponent;
 import com.eareiza.springAngular.utileria.Utileria;
+import javassist.NotFoundException;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +34,16 @@ public class CajaServiceImpl implements ICajaService {
 	private ICajachicaService cajaService;
 
 	private final Utileria util= new Utileria();
-	
+
+	@Autowired
+	private PaginationComponent paginationComponent;
+
+	@Autowired
+	private ModelMapper modelMapper;
+
+	public CajaServiceImpl() {
+	}
+
 	@Override
 	@Transactional(readOnly = true)
 	public List<Caja> findAll() {
@@ -38,8 +52,22 @@ public class CajaServiceImpl implements ICajaService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public Page<Caja> finAll(Pageable pagina) {
-		return cajaRepo.findByOrderByIdDesc(pagina);
+	public Page<CajaDto> finAll(Integer page) throws NotFoundException {
+		Pageable pagina = PageRequest.of(page, 10);
+		Page<Caja> cajas = cajaRepo.findByOrderByIdDesc(pagina);
+		if(cajas.getTotalPages() <= pagina.getPageNumber()){
+			throw new NotFoundException("No existe la pagina: "+page);
+		}
+		return cajas.map(this::modelToDTO);
+	}
+
+
+	CajaDto modelToDTO(Caja caja){
+		return modelMapper.map(caja, CajaDto.class);
+	}
+
+	private Caja dtoToModel(CajaDto cajaDto){
+		return modelMapper.map(cajaDto, Caja.class);
 	}
 
 	@Override

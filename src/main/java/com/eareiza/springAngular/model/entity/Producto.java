@@ -40,7 +40,7 @@ public class Producto extends EntityCommon implements Serializable{
 	private Double preciocosto;
 	
 	@Column(name="deleted")
-    private Boolean deleted;
+    private Boolean deleted = Boolean.FALSE;
 
 
 	@PrePersist

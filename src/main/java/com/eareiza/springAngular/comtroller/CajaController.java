@@ -8,11 +8,11 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import com.eareiza.springAngular.DTO.CajaDto;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -79,9 +79,8 @@ public class CajaController {
 	 */
 	@Secured({"ROLE_ADMIN","ROLE_USER"})
 	@GetMapping("/caja/page/{page}")
-	public Page<Caja> cajaPage(@PathVariable Integer page){
-		Pageable pagina = PageRequest.of(page, 5);
-		return cajaService.finAll(pagina);
+	public Page<CajaDto> cajaPage(@PathVariable Integer page) throws NotFoundException {
+		return cajaService.finAll(page);
 	}
 	
 	

@@ -50,7 +50,7 @@ public interface GastosRepository extends JpaRepository<Gastos, Long> {
 			+ "		from gastos "
 			+ "		WHERE MONTH(fecha_fact) = ?1 "
 			+ "		AND YEAR(fecha_fact) = ?2 "
-			+ "		group by fecha_fact "
+			+ "		group by DAY(fecha_fact) "
 			+ "		order by fecha_fact desc "
 			+ "		limit 7", nativeQuery = true)
 	public List<Object[]> findGastosXUlt7(Integer mes, Integer anio);

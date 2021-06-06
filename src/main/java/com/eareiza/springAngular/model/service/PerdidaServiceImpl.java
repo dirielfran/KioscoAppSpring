@@ -7,8 +7,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import com.eareiza.springAngular.DTO.CajaDto;
+import com.eareiza.springAngular.DTO.PerdidaDto;
+import com.eareiza.springAngular.model.entity.Caja;
+import javassist.NotFoundException;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +39,9 @@ public class PerdidaServiceImpl implements IPerdidaService {
 	@Autowired
 	private IProductoRepository productoRepo;
 
+	@Autowired
+	private ModelMapper modelMapper;
+
 	@Override
 	@Transactional(readOnly = true)
 	public List<Perdida> findAll() {
@@ -41,8 +50,22 @@ public class PerdidaServiceImpl implements IPerdidaService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public Page<Perdida> finAll(Pageable pagina) {
-		return perdidasRepo.findByOrderByIdDesc(pagina);
+	public Page<PerdidaDto> finAll(Integer page) throws NotFoundException {
+		Pageable pagina = PageRequest.of(page, 5);
+		Page<Perdida> perdidas = perdidasRepo.findByOrderByIdDesc(pagina);
+		if(perdidas.getTotalPages() <= pagina.getPageNumber()){
+			throw new NotFoundException("No existe la pagina: "+page);
+		}
+		Page<PerdidaDto> perdidasDto = perdidas.map(this::modelToDTO);
+		return perdidas.map(this::modelToDTO);
+	}
+
+	private PerdidaDto modelToDTO(Perdida perdida){
+		return modelMapper.map(perdida, PerdidaDto.class);
+	}
+
+	private Perdida dtoToModel(PerdidaDto perdidaDto){
+		return modelMapper.map(perdidaDto, Perdida.class);
 	}
 
 	@Override

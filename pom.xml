@@ -10,7 +10,7 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.eareiza</groupId>
-	<artifactId>springAngular</artifactId>
+	<artifactId>KioscoAppSpring</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>springAngular</name>
 	<description>Demo project for Spring Boot</description>
@@ -130,6 +130,7 @@
 	</dependencies>
 
 	<build>
+		<finalName>${project.artifactId}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

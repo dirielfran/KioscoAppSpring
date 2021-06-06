@@ -41,7 +41,7 @@ public class FacturaRestController {
 		return factServ.findById(idFactura);
 	}
 	
-	@Secured({"ROLE_ADMIN"})
+	@Secured({"ROLE_ADMIN", "ROLE_USER"})
 	@DeleteMapping("/facturas/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void delete(@PathVariable("id") Long idFactura) {

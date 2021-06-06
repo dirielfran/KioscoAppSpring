@@ -2,15 +2,16 @@ package com.eareiza.springAngular.interfaces;
 
 import java.util.List;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
+import com.eareiza.springAngular.DTO.PerdidaDto;
 import com.eareiza.springAngular.model.entity.Perdida;
+import javassist.NotFoundException;
+import org.springframework.data.domain.Page;
 
 public interface IPerdidaService {
 
 	List<Perdida> findAll();
-	Page<Perdida> finAll(Pageable pagina);
+	Page<PerdidaDto> finAll(Integer pagina) throws NotFoundException;
 	Perdida findById(Long idPerdida);
 	Perdida savePerdida(Perdida perdida);
 	void deletePerdida(Long idPerdida);

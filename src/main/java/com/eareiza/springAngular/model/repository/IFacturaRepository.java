@@ -33,7 +33,7 @@ public interface IFacturaRepository extends CrudRepository<Factura, Long> {
 			+ "		from facturas "
 			+ "		WHERE MONTH(create_at) = ?1 "
 			+ "		AND YEAR(create_at) = ?2 "
-			+ "		group by create_at "
+			+ "		group by DAY(create_at) "
 			+ "		order by create_at desc "
 			+ "		limit 7", nativeQuery = true)
 	public List<Object[]> findVentasXUlt7(Integer mes, Integer anio);
@@ -44,7 +44,7 @@ public interface IFacturaRepository extends CrudRepository<Factura, Long> {
 			+ "INNER JOIN itemsfactura_itemsinventario piv ON fi.id = piv.itemfactura_id "
 			+ "INNER JOIN inventarios_items ii ON ii.id = piv.iteminventario_id "
 			+ "WHERE f.create_at BETWEEN ?1 AND ?2 "
-			+ "GROUP BY f.create_at "
+			+ "GROUP BY DAY(f.create_at) "
 			+ "ORDER BY f.create_at ASC ", nativeQuery = true)
 	public List<Object[]> findGananciasXUlt7(LocalDate fechIni, LocalDate fechaFin);
 	

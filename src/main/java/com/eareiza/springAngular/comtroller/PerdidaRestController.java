@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import com.eareiza.springAngular.DTO.PerdidaDto;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
@@ -47,9 +49,8 @@ public class PerdidaRestController {
 	
 	@Secured({"ROLE_ADMIN","ROLE_USER"})
 	@GetMapping("/perdida/page/{page}")
-	public Page<Perdida> cajaPage(@PathVariable Integer page){
-		Pageable pagina = PageRequest.of(page, 5);
-		return perdidaService.finAll(pagina);
+	public Page<PerdidaDto> perdidaPage(@PathVariable Integer page) throws NotFoundException {
+		return perdidaService.finAll(page);
 	}
 	
 	//Se recupera perdida por id

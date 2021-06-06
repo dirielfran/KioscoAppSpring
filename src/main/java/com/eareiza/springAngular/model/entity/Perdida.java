@@ -1,30 +1,16 @@
 package com.eareiza.springAngular.model.entity;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.PrePersist;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 
 @Data
 @AllArgsConstructor
@@ -34,7 +20,8 @@ import lombok.NoArgsConstructor;
 public class Perdida extends EntityCommon implements Serializable{
 	
 	@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
-	@OneToOne
+	@OneToOne(fetch = FetchType.LAZY)
+	@NotFound(action= NotFoundAction.IGNORE)
 	@JoinColumn(name="producto_id")
 	private Producto producto;
 	

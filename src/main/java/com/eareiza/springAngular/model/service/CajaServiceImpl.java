@@ -62,7 +62,7 @@ public class CajaServiceImpl implements ICajaService {
 	}
 
 
-	CajaDto modelToDTO(Caja caja){
+	private CajaDto modelToDTO(Caja caja){
 		return modelMapper.map(caja, CajaDto.class);
 	}
 

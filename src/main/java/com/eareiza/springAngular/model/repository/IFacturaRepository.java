@@ -13,20 +13,19 @@ import com.eareiza.springAngular.model.entity.Factura;
 @Repository
 public interface IFacturaRepository extends CrudRepository<Factura, Long> {
 	
-	@Query(value="select p.nombre as producto, "
-						+ "sum(fi.cantidad) as cantiad, "
-						+ "inv.preciocompra as precio, "
-						+ "inv.inventario_id as inventario, "
-						+ "fi.id as factura "
-					+ "from facturas_items fi "
-					+ "inner join productos p "
-					+ "	on fi.producto_id = p.id "
-					+ "inner join inventarios_items inv "
-					+ "	on inv.id = (select iteminventario_id "
-					+ "					from itemsfactura_itemsinventario "
-					+ "					where itemfactura_id = fi.id limit 1) "
-					+ "where fi.consignacion = 1 "
-					+ "group by fi.producto_id", nativeQuery = true)
+	@Query(value="select p.nombre as producto, " +
+			"		sum(fi.cantidad) as cantiad, " +
+			"		(select preciocompra " +
+			"			from inventarios_items " +
+			"			where producto_id = p.id limit 1) as precio, " +
+			"		(select inventario_id " +
+			"			from inventarios_items " +
+			"			where producto_id = p.id limit 1) as inventario " +
+			"from facturas_items fi " +
+			"inner join productos p " +
+			"	on fi.producto_id = p.id " +
+			"where fi.consignacion = 1 " +
+			"group by fi.producto_id", nativeQuery = true)
 	public List<Object[]> findConsignaciones();	
 	
 	@Query(value="select sum(total)/1000, WEEKDAY(create_at) "

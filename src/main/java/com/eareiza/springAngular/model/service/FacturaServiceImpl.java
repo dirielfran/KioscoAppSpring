@@ -213,7 +213,7 @@ public class FacturaServiceImpl implements IFacturaService {
 			consignacion.setCantidad((Double) objects[1]);
 			consignacion.setPrecio((Double) objects[2]);
 			consignacion.setInventario(Long.parseLong(String.valueOf(objects[3])));
-			consignacion.setFactura(Long.parseLong(String.valueOf(objects[4])));
+			//consignacion.setFactura(Long.parseLong(String.valueOf(objects[4])));
 			consignaciones.add(consignacion);
 		}
 		return consignaciones;

@@ -20,7 +20,8 @@ public interface IFacturaRepository extends CrudRepository<Factura, Long> {
 			"			where producto_id = p.id limit 1) as precio, " +
 			"		(select inventario_id " +
 			"			from inventarios_items " +
-			"			where producto_id = p.id limit 1) as inventario " +
+			"			where producto_id = p.id limit 1) as inventario," +
+			"		p.id as idProducto " +
 			"from facturas_items fi " +
 			"inner join productos p " +
 			"	on fi.producto_id = p.id " +

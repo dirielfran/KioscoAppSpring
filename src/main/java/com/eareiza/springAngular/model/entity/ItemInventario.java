@@ -12,6 +12,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -24,6 +26,7 @@ public class ItemInventario extends EntityCommon{
 	//Se mapea la relacion con tabla Producto
 	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 	@ManyToOne(fetch = FetchType.LAZY)
+	@NotFound(action= NotFoundAction.IGNORE)
 	@JoinColumn(name = "producto_id")
 	private Producto producto;
 	

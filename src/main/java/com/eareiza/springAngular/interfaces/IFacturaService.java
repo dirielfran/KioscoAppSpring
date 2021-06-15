@@ -24,4 +24,6 @@ public interface IFacturaService {
 	
 	ItemFactura findItemFactura(Long idItem);
 
+	void pagarConsignacion( ConsignacionDto consignacion, boolean mercadoPago);
+
 }

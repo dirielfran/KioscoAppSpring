@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import com.eareiza.springAngular.interfaces.IGastosService;
+import com.eareiza.springAngular.interfaces.IInventarioService;
+import com.eareiza.springAngular.model.entity.*;
 import com.eareiza.springAngular.utileria.Utileria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,11 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.eareiza.springAngular.DTO.ConsignacionDto;
 import com.eareiza.springAngular.interfaces.IFacturaService;
 import com.eareiza.springAngular.interfaces.IItemInventarioService;
-import com.eareiza.springAngular.model.entity.Comision;
-import com.eareiza.springAngular.model.entity.Factura;
-import com.eareiza.springAngular.model.entity.ItemFactura;
-import com.eareiza.springAngular.model.entity.ItemInventario;
-import com.eareiza.springAngular.model.entity.Producto;
 import com.eareiza.springAngular.model.repository.IComisionRepository;
 import com.eareiza.springAngular.model.repository.IFacturaRepository;
 import com.eareiza.springAngular.model.repository.IItemFacturaRepository;
@@ -51,6 +49,12 @@ public class FacturaServiceImpl implements IFacturaService {
 	@Autowired
 	private IProductoRepository productoRepo;
 
+	@Autowired
+	private IInventarioService inventarioService;
+
+	@Autowired
+	private IGastosService gastoService;
+
 	private static final Utileria util = new Utileria();
 	
 	/**
@@ -62,8 +66,7 @@ public class FacturaServiceImpl implements IFacturaService {
 	@Override
 	@Transactional(readOnly = true)
 	public Factura findById(Long idFactura) {
-		Factura factura = facturasRepo.findById(idFactura).orElse(null);
-		return factura;
+		return facturasRepo.findById(idFactura).orElse(null);
 	}
 
 		
@@ -87,7 +90,7 @@ public class FacturaServiceImpl implements IFacturaService {
 			Double cantidad = BigDecimal.valueOf(item.getCantidad()).setScale(3, RoundingMode.HALF_UP).doubleValue();
 			List<ItemInventario> inventAfect = new ArrayList<>();
 			for (ItemInventario itemInv : items) {
-				if(itemInv.getConsignacion()==true) consignacion = true;
+				if(itemInv.getConsignacion()) consignacion = true;
 				if (cantidad > 0) {
 					Double existencia =  BigDecimal.valueOf(itemInv.getExistencia()).setScale(3, RoundingMode.HALF_UP).doubleValue();
 					//Se valida si la existencia es menor o igual
@@ -124,8 +127,8 @@ public class FacturaServiceImpl implements IFacturaService {
 		List<Comision> comisiones = (List<Comision>) comisionRepo.findAll();
 		//TODO falta exception en caso de que factura no tenga codigo de comision
 		Comision comision = comisiones.stream()
-		.filter(comi -> factura.getTipopago().get("code").equals(comi.getCode()))
-		.findFirst().get();
+			.filter(comi -> factura.getTipopago().get("code").equals(comi.getCode()))
+			.findFirst().get();
 		factura.setComision(comision);
 	}
 
@@ -213,7 +216,7 @@ public class FacturaServiceImpl implements IFacturaService {
 			consignacion.setCantidad((Double) objects[1]);
 			consignacion.setPrecio((Double) objects[2]);
 			consignacion.setInventario(Long.parseLong(String.valueOf(objects[3])));
-			//consignacion.setFactura(Long.parseLong(String.valueOf(objects[4])));
+			consignacion.setProductoId(Long.parseLong(String.valueOf(objects[4])));
 			consignaciones.add(consignacion);
 		}
 		return consignaciones;
@@ -257,5 +260,15 @@ public class FacturaServiceImpl implements IFacturaService {
 	@Override
 	public ItemFactura findItemFactura(Long idItem) {
 		return itemFactRepo.findById(idItem).orElse(null);
+	}
+
+	public void pagarConsignacion( ConsignacionDto consignacion, boolean mercadoPago){
+		List<ItemFactura> facturas = findItemsFactura(consignacion.getProductoId());
+		Inventario inventario = inventarioService.findById(consignacion.getInventario());
+		gastoService.crearGastoInventario(inventario, "Consignacion", consignacion, mercadoPago);
+		facturas.forEach(itemFactura -> {
+			itemFactura.setConsignacion(false);
+			saveItemFactura(itemFactura);
+		});
 	}
 }

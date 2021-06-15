@@ -66,21 +66,15 @@ public class ConsignacionRestController {
 		return new ResponseEntity<List<ConsignacionDto>>(consignaciones, HttpStatus.OK);
 	}
 	
-	//Se le añade seguridad a los endpoint por url
 	@Secured({"ROLE_ADMIN", "ROLE_USER"})
 	@PostMapping("/consignaciones")
 	public ResponseEntity<?> crearGasto(@Valid @RequestBody ConsignacionDto consignacion, BindingResult result, @RequestParam("mercadoPago") Boolean mercadoPago){
-		//Se agrega map para el envio de mensaje y obj en el response
 		Map<String, Object> response = new HashMap<>();
-		
 		//Validacion de errores del binding result
 		if(result.hasErrors()) {
 			List<String> errores = result.getFieldErrors()
-					//Se convierten a stream
 					.stream()
-					//Cada error se convierte en un tipo String
 					.map(err -> "El campo '"+err.getField()+"' "+err.getDefaultMessage())
-					//Se convierte en una lista 
 					.collect(Collectors.toList());
 			response.put("errores", errores);
 			return new ResponseEntity<Map<String, Object>>(response,HttpStatus.BAD_REQUEST);
@@ -88,24 +82,13 @@ public class ConsignacionRestController {
 		
 		//Manejo de errores utilizando el obj de spring DataAccessException
 		try {
-			ItemFactura itemFactura = facturasService.findItemFactura(consignacion.getFactura());		
-			List<ItemFactura> facturas = facturasService.findItemsFactura(itemFactura.getProducto().getId());
-			Inventario inventario = inventarioService.findById(consignacion.getInventario());
-			gastoService.crearGastoInventario(inventario, "Consignacion", consignacion, mercadoPago);
-			for (ItemFactura factura : facturas) {
-				factura.setConsignacion(false);
-				facturasService.saveItemFactura(factura);
-			}
+			facturasService.pagarConsignacion(consignacion, mercadoPago);
 		} catch (DataAccessException e) {
-			//Se crean mensajes de error y se añaden all map
 			response.put("mensaje", "Error al crear gasto en la Base de Datos");
 			response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
-			//Se crea respuesta enviando los mensajes del error y el estatus
 			return new ResponseEntity<Map<String, Object>>(response,HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		//Se agrega mensaje success al mapa
-		response.put("mensaje", "El gasto se ha registrado");	
-		//Se retorna respuesta añadiendo mapa y estatus
+		response.put("mensaje", "El gasto se ha registrado");
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
 	}	
 	

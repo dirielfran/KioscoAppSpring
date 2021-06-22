@@ -6,8 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import com.eareiza.springAngular.interfaces.IGastosService;
-import com.eareiza.springAngular.interfaces.IInventarioService;
+import com.eareiza.springAngular.interfaces.*;
 import com.eareiza.springAngular.model.entity.*;
 import com.eareiza.springAngular.utileria.Utileria;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.eareiza.springAngular.DTO.ConsignacionDto;
-import com.eareiza.springAngular.interfaces.IFacturaService;
-import com.eareiza.springAngular.interfaces.IItemInventarioService;
 import com.eareiza.springAngular.model.repository.IComisionRepository;
 import com.eareiza.springAngular.model.repository.IFacturaRepository;
 import com.eareiza.springAngular.model.repository.IItemFacturaRepository;
@@ -55,6 +52,9 @@ public class FacturaServiceImpl implements IFacturaService {
 	@Autowired
 	private IGastosService gastoService;
 
+	@Autowired
+	private IProductoService productoService;
+
 	private static final Utileria util = new Utileria();
 	
 	/**
@@ -89,32 +89,45 @@ public class FacturaServiceImpl implements IFacturaService {
 			List<ItemInventario> items = itemInvServ.getInventarios(item.getProducto().getId(), "Activo");
 			Double cantidad = BigDecimal.valueOf(item.getCantidad()).setScale(3, RoundingMode.HALF_UP).doubleValue();
 			List<ItemInventario> inventAfect = new ArrayList<>();
-			for (ItemInventario itemInv : items) {
-				if(itemInv.getConsignacion()) consignacion = true;
-				if (cantidad > 0) {
-					Double existencia =  BigDecimal.valueOf(itemInv.getExistencia()).setScale(3, RoundingMode.HALF_UP).doubleValue();
-					//Se valida si la existencia es menor o igual
-					if(cantidad <= existencia) {
-						itemInv.setExistencia(BigDecimal.valueOf(existencia-cantidad).setScale(3, RoundingMode.HALF_UP).doubleValue());
-						cantidad = 0D;
-					}else {
-						itemInv.setExistencia(0D);
-						cantidad -= existencia;
-					}
-					if(itemInv.getExistencia() == 0) {
-						itemInv.setEstado("Inactivo");	
-						item.setItem_inventario(itemInv);
-						item.setCantinv(existencia);
-					}
-					itemInvServ.saveItemInventario(itemInv);	
-					inventAfect.add(itemInv);
-				}
-			}
+			validaExistInv(items,cantidad,consignacion, item,inventAfect);
 			item.setConsignacion(consignacion);
 			item.setItems_inventario(inventAfect);
+			Producto producto = item.getProducto();
+			//calculo de existencia
+			BigDecimal numeroBg = BigDecimal.valueOf(producto.getExistencia()-item.getCantidad()).setScale(3, RoundingMode.HALF_UP);
+			Double existencia = numeroBg.doubleValue();
+			producto.setExistencia(existencia);
+			productoService.saveProducto(producto);
 		}
 		factura.setUser(util.getUsuarioAuth());
 		return facturasRepo.save(factura);
+	}
+
+	private void validaExistInv(List<ItemInventario> inventarios, Double cantidad, boolean consignacion,
+								   ItemFactura item, List<ItemInventario> inventAfect){
+		for (ItemInventario itemInv : inventarios) {
+			if(itemInv.getConsignacion()) consignacion = true;
+			if (cantidad > 0) {
+				Double existencia =  BigDecimal.valueOf(itemInv.getExistencia())
+						.setScale(3, RoundingMode.HALF_UP).doubleValue();
+				//Se valida si la existencia es menor o igual
+				if(cantidad <= existencia) {
+					itemInv.setExistencia(BigDecimal.valueOf(existencia-cantidad)
+							.setScale(3, RoundingMode.HALF_UP).doubleValue());
+					cantidad = 0D;
+				}else {
+					itemInv.setExistencia(0D);
+					cantidad -= existencia;
+				}
+				if(itemInv.getExistencia() == 0) {
+					itemInv.setEstado("Inactivo");
+					item.setItem_inventario(itemInv);
+					item.setCantinv(existencia);
+				}
+				itemInvServ.saveItemInventario(itemInv);
+				inventAfect.add(itemInv);
+			}
+		}
 	}
 	
 	

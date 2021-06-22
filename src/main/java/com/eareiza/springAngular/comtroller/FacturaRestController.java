@@ -59,14 +59,6 @@ public class FacturaRestController {
 	@PostMapping("/facturas")
 	@ResponseStatus(HttpStatus.CREATED)
 	public Factura crearFactura(@RequestBody Factura factura) {
-		for (ItemFactura item : factura.getItems()) {			
-			Producto producto = item.getProducto();
-			//calculo de existencia
-			BigDecimal numeroBg = BigDecimal.valueOf(producto.getExistencia()-item.getCantidad()).setScale(3, RoundingMode.HALF_UP);
-			Double existencia = numeroBg.doubleValue();
-			producto.setExistencia(existencia);
-			productoServ.saveProducto(producto);
-		}
 		return factServ.saveFactura(factura);
 	}	
 }

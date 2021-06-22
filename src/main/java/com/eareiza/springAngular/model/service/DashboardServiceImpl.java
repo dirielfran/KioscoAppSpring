@@ -5,11 +5,9 @@ import java.io.IOException;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.time.temporal.TemporalField;
+import java.time.temporal.WeekFields;
+import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -55,9 +53,11 @@ public class DashboardServiceImpl implements IDashboardService{
 	
 	@Override
 	public List<Object[]> findGastosUlt7() {
-		Integer mes = fecha.getMonthValue();
-		Integer anio = fecha.getYear();
-		return gastosRepo.findGastosXUlt7(mes, anio);
+		int mes = fecha.getMonthValue();
+		int anio = fecha.getYear();
+		TemporalField woy = WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear();
+		int semana = fecha.get(woy)-1;
+		return gastosRepo.findGastosXUlt7(mes, anio, semana );
 	}
 	
 

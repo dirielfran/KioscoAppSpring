@@ -50,10 +50,10 @@ public interface GastosRepository extends JpaRepository<Gastos, Long> {
 			+ "		from gastos "
 			+ "		WHERE MONTH(fecha_fact) = ?1 "
 			+ "		AND YEAR(fecha_fact) = ?2 "
-			+ "		group by DAY(fecha_fact) "
-			+ "		order by fecha_fact desc "
-			+ "		limit 7", nativeQuery = true)
-	public List<Object[]> findGastosXUlt7(Integer mes, Integer anio);
+			+ "		AND WEEK(fecha_fact) = ?3 "
+			+ "		group by WEEKDAY(fecha_fact) "
+			+ "		order by WEEKDAY(fecha_fact) desc ", nativeQuery = true)
+	public List<Object[]> findGastosXUlt7(Integer mes, Integer anio, int semana);
 	
 	@Query(value="SELECT SUM(g.montoPesos) "
 			+ "FROM Gastos g "

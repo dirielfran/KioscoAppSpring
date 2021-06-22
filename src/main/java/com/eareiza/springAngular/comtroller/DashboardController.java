@@ -106,7 +106,7 @@ public class DashboardController {
 		//Se valida si los datos son null y se maneja el error
 		if(gastos.isEmpty() || ventas.isEmpty() || ganancias.isEmpty()  ) {
 			response.put("mensaje", "No hay registros para las fechas indicadas en el reporte");
-			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.FORBIDDEN);
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.BAD_REQUEST);
 		}
 		response.put("ventas", ventas);
 		response.put("gastos", gastos);

@@ -27,4 +27,11 @@ public interface IPerdidaRepository extends JpaRepository<Perdida, Long> {
 			+ "WEEK(create_at) ASC;", nativeQuery=true)
 	public List<Object[]> findPerdidasXSemana(LocalDate fechIni, LocalDate fechaFin);
 
+	@Query(value="select sum(monto), DAY(create_at) "
+			+ "		from perdidas "
+			+ "		WHERE MONTH(create_at) = ?1 "
+			+ "		AND YEAR(create_at) = ?2 "
+			+ "		group by DAY(create_at) ", nativeQuery = true)
+	public List<Object[]> findPerdidasXUlt30(Integer mes, Integer anio);
+
 }

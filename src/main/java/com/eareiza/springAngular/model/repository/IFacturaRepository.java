@@ -29,14 +29,12 @@ public interface IFacturaRepository extends CrudRepository<Factura, Long> {
 			"group by fi.producto_id", nativeQuery = true)
 	public List<Object[]> findConsignaciones();	
 	
-	@Query(value="select sum(total)/1000, WEEKDAY(create_at) "
+	@Query(value="select sum(total)/1000, DAY(create_at) "
 			+ "		from facturas "
 			+ "		WHERE MONTH(create_at) = ?1 "
 			+ "		AND YEAR(create_at) = ?2 "
-			+ "		group by DAY(create_at) "
-			+ "		order by create_at desc "
-			+ "		limit 7", nativeQuery = true)
-	public List<Object[]> findVentasXUlt7(Integer mes, Integer anio);
+			+ "		group by DAY(create_at)", nativeQuery = true)
+	public List<Object[]> findVentasXUlt30(Integer mes, Integer anio);
 	
 	@Query(value="SELECT SUM(((fi.precio-ii.preciocompra)*fi.cantidad)+fi.comision) AS ganancia, DAYOFMONTH(f.create_at) "
 			+ "FROM facturas_items fi "

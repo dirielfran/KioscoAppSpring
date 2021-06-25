@@ -308,7 +308,7 @@ public class CajaController {
 	 * @return the gastos
 	 */
 	//Se recuperan total de diferencias por mes
-	@Secured({"ROLE_ADMIN", "ROLE_USER"})
+	@Secured({"ROLE_ADMIN"})
 	@GetMapping("/caja/diferenciasxmes")
 	public ResponseEntity<?> getGastos( ) {
 		Double diferencias = null;

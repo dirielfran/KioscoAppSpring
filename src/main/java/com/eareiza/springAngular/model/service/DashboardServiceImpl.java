@@ -48,16 +48,14 @@ public class DashboardServiceImpl implements IDashboardService{
 	public List<Object[]> findVentasUlt7() {
 		Integer mes = fecha.getMonthValue();
 		Integer anio = fecha.getYear();
-		return facturasRepo.findVentasXUlt7(mes, anio);
+		return facturasRepo.findVentasXUlt30(mes, anio);
 	}
 	
 	@Override
 	public List<Object[]> findGastosUlt7() {
 		int mes = fecha.getMonthValue();
 		int anio = fecha.getYear();
-		TemporalField woy = WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear();
-		int semana = fecha.get(woy)-1;
-		return gastosRepo.findGastosXUlt7(mes, anio, semana );
+		return gastosRepo.findGastosXUlt30(mes, anio);
 	}
 	
 
@@ -69,9 +67,9 @@ public class DashboardServiceImpl implements IDashboardService{
 	
 	@Override
 	public List<Object[]> findPerdidasXSemana() {
-		LocalDate desde = fecha.withDayOfMonth(1);
-		LocalDate hasta = fecha.withDayOfMonth(fecha.lengthOfMonth());
-		return perdidaRepo.findPerdidasXSemana(desde, hasta);
+		int mes = fecha.getMonthValue();
+		int anio = fecha.getYear();
+		return perdidaRepo.findPerdidasXUlt30(mes, anio);
 	}
 
 	@Override

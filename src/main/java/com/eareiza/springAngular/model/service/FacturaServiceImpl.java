@@ -56,7 +56,9 @@ public class FacturaServiceImpl implements IFacturaService {
 	private IProductoService productoService;
 
 	private static final Utileria util = new Utileria();
-	
+
+	private boolean consignacion;
+
 	/**
 	 * Find by id.
 	 *
@@ -82,14 +84,14 @@ public class FacturaServiceImpl implements IFacturaService {
 		//Se asina comision en a la factura en caso de existir code comision
 		if( factura.getTipopago() != null ) asignacionComision(factura);
 		for (ItemFactura item : factura.getItems()) {
-			boolean consignacion = false;
+			this.consignacion = false;
 			Comision comision = comisionRepo.findbyProducto(item.getProducto().getId());
 			if (comision != null) item.setComision(comision.getComision());
 			//Se recuperan los inventarios activos
 			List<ItemInventario> items = itemInvServ.getInventarios(item.getProducto().getId(), "Activo");
 			Double cantidad = BigDecimal.valueOf(item.getCantidad()).setScale(3, RoundingMode.HALF_UP).doubleValue();
 			List<ItemInventario> inventAfect = new ArrayList<>();
-			validaExistInv(items,cantidad,consignacion, item,inventAfect);
+			validaExistInv(items,cantidad, item,inventAfect);
 			item.setConsignacion(consignacion);
 			item.setItems_inventario(inventAfect);
 			Producto producto = item.getProducto();
@@ -103,10 +105,10 @@ public class FacturaServiceImpl implements IFacturaService {
 		return facturasRepo.save(factura);
 	}
 
-	private void validaExistInv(List<ItemInventario> inventarios, Double cantidad, boolean consignacion,
+	private void validaExistInv(List<ItemInventario> inventarios, Double cantidad,
 								   ItemFactura item, List<ItemInventario> inventAfect){
 		for (ItemInventario itemInv : inventarios) {
-			if(itemInv.getConsignacion()) consignacion = true;
+			if(itemInv.getConsignacion()) this.consignacion = true;
 			if (cantidad > 0) {
 				Double existencia =  BigDecimal.valueOf(itemInv.getExistencia())
 						.setScale(3, RoundingMode.HALF_UP).doubleValue();

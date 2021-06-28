@@ -42,8 +42,7 @@ public interface IFacturaRepository extends CrudRepository<Factura, Long> {
 			+ "INNER JOIN itemsfactura_itemsinventario piv ON fi.id = piv.itemfactura_id "
 			+ "INNER JOIN inventarios_items ii ON ii.id = piv.iteminventario_id "
 			+ "WHERE f.create_at BETWEEN ?1 AND ?2 "
-			+ "GROUP BY DAY(f.create_at) "
-			+ "ORDER BY f.create_at ASC ", nativeQuery = true)
+			+ "GROUP BY DAY(f.create_at)", nativeQuery = true)
 	public List<Object[]> findGananciasXUlt7(LocalDate fechIni, LocalDate fechaFin);
 	
 	@Query(value="SELECT  SUM(f.total) "

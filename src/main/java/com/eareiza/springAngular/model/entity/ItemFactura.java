@@ -32,6 +32,7 @@ public class ItemFactura extends EntityCommon implements Serializable {
 
 	private Double cantidad;
 	private Double precio;
+	private Double total;
 
 	// Se mapea la relacion con tabla Producto
 	@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })

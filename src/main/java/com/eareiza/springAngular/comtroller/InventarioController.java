@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import com.eareiza.springAngular.utileria.Utileria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
@@ -49,6 +50,8 @@ public class InventarioController {
 	IUsuariosService usuarioService;
 	@Autowired
 	IGastosService gastosService;
+
+	private static final Utileria util = new Utileria();
 	
 	@GetMapping("/inventarios")
 	public List<Inventario> cajas(){
@@ -122,6 +125,7 @@ public class InventarioController {
 				item.setStockinicial(item.getProducto().getExistencia());
 				item.setExistencia(item.getStockadd());
 				item.setConsignacion(consignacion);
+				item.setUser(util.getUsuarioAuth());
 				//Se modifica existencia y precio del producto segun el inventario cargado
 				Producto producto = item.getProducto();
 				producto.setExistencia(existenciaActual);

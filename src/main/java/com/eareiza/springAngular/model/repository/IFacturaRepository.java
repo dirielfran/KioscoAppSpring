@@ -61,4 +61,6 @@ public interface IFacturaRepository extends CrudRepository<Factura, Long> {
 			+ "GROUP BY MONTH(f.create_at) "
 			+ "ORDER BY MONTH(f.create_at) ASC", nativeQuery = true)
 	public List<Double> findGananciasXMes();
+
+	public List<Factura> findByCosto(boolean costo);
 }

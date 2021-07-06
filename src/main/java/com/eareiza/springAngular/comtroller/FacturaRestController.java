@@ -1,11 +1,12 @@
 
 package com.eareiza.springAngular.comtroller;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
+import java.util.List;
 
+import com.eareiza.springAngular.DTO.FacturaDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -60,5 +61,12 @@ public class FacturaRestController {
 	@ResponseStatus(HttpStatus.CREATED)
 	public Factura crearFactura(@RequestBody Factura factura) {
 		return factServ.saveFactura(factura);
-	}	
+	}
+
+	@Secured({"ROLE_ADMIN", "ROLE_USER"})
+	@GetMapping("/facturas/costo")
+	public ResponseEntity<List<FacturaDto>> findFacturasCosto(){
+		List<FacturaDto> facturas = factServ.findFacturasCosto();
+		return new ResponseEntity<List<FacturaDto>>(factServ.findFacturasCosto(), HttpStatus.OK);
+	}
 }

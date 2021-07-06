@@ -5,10 +5,14 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import com.eareiza.springAngular.DTO.FacturaDto;
+import com.eareiza.springAngular.DTO.PerdidaDto;
 import com.eareiza.springAngular.interfaces.*;
 import com.eareiza.springAngular.model.entity.*;
 import com.eareiza.springAngular.utileria.Utileria;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,6 +61,9 @@ public class FacturaServiceImpl implements IFacturaService {
 
 	private static final Utileria util = new Utileria();
 
+	@Autowired
+	private ModelMapper modelMapper;
+
 	private boolean consignacion;
 
 	/**
@@ -81,17 +88,19 @@ public class FacturaServiceImpl implements IFacturaService {
 	@Override
 	@Transactional
 	public Factura saveFactura(Factura factura) {
-		//Se asina comision en a la factura en caso de existir code comision
+		//Se asina comision pr producto en a la factura en caso de existir code comision
 		if( factura.getTipopago() != null ) asignacionComision(factura);
 		for (ItemFactura item : factura.getItems()) {
 			this.consignacion = false;
 			Comision comision = comisionRepo.findbyProducto(item.getProducto().getId());
+			//Se asigna comision por metodo de pago
 			if (comision != null) item.setComision(comision.getComision());
 			//Se recuperan los inventarios activos
 			List<ItemInventario> items = itemInvServ.getInventarios(item.getProducto().getId(), "Activo");
 			Double cantidad = BigDecimal.valueOf(item.getCantidad()).setScale(3, RoundingMode.HALF_UP).doubleValue();
 			List<ItemInventario> inventAfect = new ArrayList<>();
-			validaExistInv(items,cantidad, item,inventAfect);
+			//Se valida existencia
+			validaExistInv(items,cantidad, item,inventAfect, factura.isCosto());
 			item.setConsignacion(consignacion);
 			item.setItems_inventario(inventAfect);
 			Producto producto = item.getProducto();
@@ -105,8 +114,19 @@ public class FacturaServiceImpl implements IFacturaService {
 		return facturasRepo.save(factura);
 	}
 
+
+	/**
+	 * Metodo que valida existencia del producto, modifica la existencia del producto en el
+	 * inventario y agrega el total a cada iten de factura
+	 *
+	 * @param inventarios Lista de inventarios activos del producto
+	 * @param cantidad, cantidad que se requiere que exista
+	 * @param item, Item de factura
+	 * @param inventAfect, Inventarios a los que se les descuenta productos
+	 */
 	private void validaExistInv(List<ItemInventario> inventarios, Double cantidad,
-								   ItemFactura item, List<ItemInventario> inventAfect){
+								   ItemFactura item, List<ItemInventario> inventAfect, Boolean costo){
+		Double total = 0D;
 		for (ItemInventario itemInv : inventarios) {
 			if(itemInv.getConsignacion()) this.consignacion = true;
 			if (cantidad > 0) {
@@ -116,10 +136,12 @@ public class FacturaServiceImpl implements IFacturaService {
 				if(cantidad <= existencia) {
 					itemInv.setExistencia(BigDecimal.valueOf(existencia-cantidad)
 							.setScale(3, RoundingMode.HALF_UP).doubleValue());
+					total += costo ? cantidad * itemInv.getPreciocompra() : cantidad * item.getPrecio();
 					cantidad = 0D;
 				}else {
 					itemInv.setExistencia(0D);
 					cantidad -= existencia;
+					total += costo ? existencia * itemInv.getPreciocompra() : existencia * item.getPrecio();
 				}
 				if(itemInv.getExistencia() == 0) {
 					itemInv.setEstado("Inactivo");
@@ -130,6 +152,7 @@ public class FacturaServiceImpl implements IFacturaService {
 				inventAfect.add(itemInv);
 			}
 		}
+		item.setTotal(total);
 	}
 	
 	
@@ -197,9 +220,6 @@ public class FacturaServiceImpl implements IFacturaService {
 		}
 		facturasRepo.deleteById(idFactura);
 	}
-
-
-
 
 	/**
 	 * Modifico factura.
@@ -285,5 +305,19 @@ public class FacturaServiceImpl implements IFacturaService {
 			itemFactura.setConsignacion(false);
 			saveItemFactura(itemFactura);
 		});
+	}
+
+	public List<FacturaDto> findFacturasCosto(){
+		return facturasRepo.findByCosto(true)
+				.stream().map(this::modelToDTO)
+				.collect(Collectors.toList());
+	}
+
+	private FacturaDto modelToDTO(Factura factura){
+		return modelMapper.map(factura, FacturaDto.class);
+	}
+
+	private Perdida dtoToModel(PerdidaDto perdidaDto){
+		return modelMapper.map(perdidaDto, Perdida.class);
 	}
 }

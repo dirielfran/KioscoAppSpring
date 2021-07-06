@@ -13,12 +13,14 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NonNull;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -35,6 +37,8 @@ public class Factura extends EntityCommon implements Serializable{
 	private Double puntoventa;
 	private Double montocomision;
 	private Double pedidosyaefectivo;
+	@NotNull
+	private boolean costo;
 	
 	@Transient
 	private Map<String, String> tipopago;

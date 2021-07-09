@@ -7,10 +7,11 @@ import lombok.Getter;
 @Getter @AllArgsConstructor
 public class ErrorInfo {
 
-    @JsonProperty("message")
+    @JsonProperty("mensaje")
     private String message;
     @JsonProperty("status_code")
     private int statusCode;
     @JsonProperty("uri")
     private String uriRequested;
+
 }

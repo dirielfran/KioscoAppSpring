@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import com.eareiza.springAngular.DTO.CajaDto;
+import com.eareiza.springAngular.exceptions.AperturaCajaException;
 import com.eareiza.springAngular.utileria.PaginationComponent;
 import com.eareiza.springAngular.utileria.Utileria;
 import javassist.NotFoundException;
@@ -103,9 +104,14 @@ public class CajaServiceImpl implements ICajaService {
 			}
 			cajaService.registroCaja(factura);
 		}
+		if( caja.getFacturas().isEmpty() && validaAperturaCaja()) throw new AperturaCajaException();
 		caja.setGanancia(ganancias);
 		caja.setUser(util.getUsuarioAuth());
 		return cajaRepo.save(caja);
+	}
+
+	private boolean validaAperturaCaja(){
+		return cajaRepo.countByEstado("Abierto") > 0;
 	}
 
 	@Override

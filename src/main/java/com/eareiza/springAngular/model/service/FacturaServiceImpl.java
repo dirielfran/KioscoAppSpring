@@ -307,6 +307,7 @@ public class FacturaServiceImpl implements IFacturaService {
 		});
 	}
 
+	@Transactional(readOnly = true)
 	public List<FacturaDto> findFacturasCosto(){
 		return facturasRepo.findByCosto(true)
 				.stream().map(this::modelToDTO)

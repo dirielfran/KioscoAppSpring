@@ -63,4 +63,5 @@ public interface IFacturaRepository extends CrudRepository<Factura, Long> {
 	public List<Double> findGananciasXMes();
 
 	public List<Factura> findByCosto(boolean costo);
+
 }

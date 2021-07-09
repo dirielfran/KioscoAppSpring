@@ -69,23 +69,7 @@ public class InventarioController {
 	@Secured({"ROLE_ADMIN", "ROLE_USER"})
 	@GetMapping("/inventarios/{id}")
 	public ResponseEntity<?> showInventario(@PathVariable Long id) {
-		Inventario inventario = null;
-		//Se crea Map para el envio de mensaje de error en el ResponseEntity
-		Map<String, Object> response = new HashMap<>();
-		//Se maneja el error de base datos con el obj de spring DataAccessExceptions
-		try {
-			//Se recupera el inventario por el id
-			inventario = inventarioService.findById(id);
-		} catch (DataAccessException e) {
-			response.put("mensaje", "Error a realizar la consulta en la base de Datos.");
-			response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
-			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-		//Se valida si el inventario es null y se maneja el error
-		if(inventario == null) {
-			response.put("mensaje", "El inventario ID: ".concat(id.toString().concat(" no existe en la Base de Datos")));
-			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
-		}
+		Inventario inventario = inventarioService.findById(id);
 		//En caso de existir se retorna el obj y el estatus del mensaje
 		return new ResponseEntity<Inventario>(inventario, HttpStatus.OK);
 	}
@@ -187,27 +171,13 @@ public class InventarioController {
 		response.put("inventario", inventarioUpd);
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
 	}
-	
+
 	//Metodo para la eliminacion de un inventario
 	@Secured({"ROLE_ADMIN"})
 	@DeleteMapping("/inventarios/{idInventario}")
 	public ResponseEntity<?> deleteInventario(@PathVariable Long idInventario){
-
-		Map<String, Object> response = new HashMap<>();
-		try {
-			Gastos gasto = gastosService.buscarPorInventario(idInventario);
-			if(gasto != null )gastosService.borrarGasto(gasto.getId());
-			inventarioService.delete(idInventario);
-		} catch (DataAccessException e) {
-			response.put("mensaje", "Error al eliminar el inventario ID: "
-					.concat(idInventario.toString())
-					.concat(" No existe en la base de datos."));
-			response.put("error", e.getMessage().concat(": ")
-					.concat(e.getMostSpecificCause().getMessage()));
-			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-		response.put("mensaje", "El inventario ha sido eliminada con exito.");
-		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
+		inventarioService.delete(idInventario);
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 }
 

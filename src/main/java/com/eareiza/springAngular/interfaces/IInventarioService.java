@@ -11,12 +11,10 @@ public interface IInventarioService {
 	public List<Inventario> findAll();
 	
 	public Page<Inventario> findAll(Pageable pagina);
-	
-	//public Page<Inventario> buscarXEstado(Pageable pagina);
-	
+
 	public Inventario save(Inventario inventario);
-	
+
 	public Inventario findById(Long id);
-	
+
 	public void delete(Long id);
 }

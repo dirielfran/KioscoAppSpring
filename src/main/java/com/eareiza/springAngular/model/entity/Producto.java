@@ -38,6 +38,7 @@ public class Producto extends EntityCommon implements Serializable{
 	private String proveedor;
 	private Double minimo;
 	private Double preciocosto;
+	private String codigo;
 	
 	@Column(name="deleted")
     private Boolean deleted = Boolean.FALSE;

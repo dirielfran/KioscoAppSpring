@@ -24,7 +24,7 @@ public class ProductoServiceImpl implements IProductoService {
 	@Override
 	@Transactional(readOnly = true)
 	public List<Producto> findProductoByNombre(String nombre) {
-		return productoRepo.findByNombreContainingIgnoreCase(nombre);
+		return productoRepo.findByNombreContainingIgnoreCaseOrCodigoContainingIgnoreCase(nombre, nombre);
 	}
 
 	@Override

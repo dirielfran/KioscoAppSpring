@@ -163,6 +163,7 @@ public class ProductoController {
 			productoAct.setProveedor(producto.getProveedor());
 			productoAct.setExistencia(producto.getExistencia());
 			productoAct.setMinimo(producto.getMinimo());
+			productoAct.setCodigo(producto.getCodigo());
 			productoUpd = productoServ.saveProducto(productoAct);
 		} catch (DataAccessException e) {
 			response.put("mensaje", "Error al modificar el cliente con Id: ".concat(id.toString()).concat(" en la base de datos."));
